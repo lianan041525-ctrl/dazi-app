@@ -1,11 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
 import { toast } from '@/components/Toast';
 import Toast from '@/components/Toast';
 
-export default function LoginPage() {
+function LoginInner() {
   const router = useRouter();
   const params = useSearchParams();
   const redirect = params.get('redirect') || '/';
@@ -19,7 +19,7 @@ export default function LoginPage() {
   const supabase = supabaseBrowser();
 
   const sendOtp = async () => {
-    if (!/^1\d{10}$/.test(phone)) return toast('请输入正确手机号');
+    if (!phone.includes('@')) return toast('请输入正确邮箱');
     setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: phone,
@@ -57,13 +57,11 @@ export default function LoginPage() {
 
       <div className="mt-8 space-y-3">
         <div className="flex items-center bg-white rounded-xl px-4 h-12">
-          <span className="text-gray-500 text-sm">+86</span>
           <input
-            inputMode="numeric" maxLength={11}
             value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-            placeholder="请输入手机号"
-            className="flex-1 ml-3 bg-transparent outline-none"
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="请输入邮箱"
+            className="flex-1 bg-transparent outline-none"
           />
         </div>
 
@@ -99,5 +97,13 @@ export default function LoginPage() {
 
       <Toast />
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-gray-400">加载中...</div>}>
+      <LoginInner />
+    </Suspense>
   );
 }
