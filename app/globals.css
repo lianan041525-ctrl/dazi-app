@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  -webkit-tap-highlight-color: transparent;
+  background: #F7F7F8;
+  color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+/* 隐藏滚动条 */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* 安全区 */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
