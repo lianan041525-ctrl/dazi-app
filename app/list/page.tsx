@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
@@ -8,7 +9,7 @@ import { CATEGORIES } from '@/lib/constants';
 import { useCityStore } from '@/lib/store';
 import PostCard, { PostCardData } from '@/components/PostCard';
 
-export default function ListPage() {
+function ListInner() {
   const router = useRouter();
   const params = useSearchParams();
   const { city } = useCityStore();
@@ -93,5 +94,13 @@ export default function ListPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-gray-400">加载中...</div>}>
+      <ListInner />
+    </Suspense>
   );
 }

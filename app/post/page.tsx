@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
@@ -8,7 +9,7 @@ import { CATEGORIES, TIME_OPTIONS } from '@/lib/constants';
 import { useCityStore } from '@/lib/store';
 import Toast, { toast } from '@/components/Toast';
 
-export default function PostPage() {
+function PostInner() {
   const router = useRouter();
   const params = useSearchParams();
   const { city } = useCityStore();
@@ -201,5 +202,13 @@ export default function PostPage() {
 
       <Toast />
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-gray-400">加载中...</div>}>
+      <PostInner />
+    </Suspense>
   );
 }
