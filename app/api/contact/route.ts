@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     );
 
     // 联系次数 +1（尽力而为，失败不影响主流程）
-    await sb.rpc('increment_contact_count', { pid: post_id }).catch(() => {});
+    try { await sb.rpc('increment_contact_count', { pid: post_id }); } catch {}
 
     return NextResponse.json({
       code: 0,
