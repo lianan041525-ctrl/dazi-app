@@ -54,7 +54,7 @@ export default function MinePage() {
         <div className="absolute inset-0 -z-10" style={{
           background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,94,120,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(108,92,231,0.2) 0%, transparent 60%)',
         }} />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 cursor-pointer" onClick={() => router.push("/mine/edit")}>
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-medium overflow-hidden shrink-0"
             style={{ background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)', color: '#fff', boxShadow: '0 8px 24px rgba(255,94,120,0.3)' }}>
             {profile?.avatar ? (
@@ -66,7 +66,10 @@ export default function MinePage() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-xl font-semibold text-white truncate">{profile?.nickname}</div>
-            <div className="text-xs text-white/50 mt-1.5">📍 {profile?.city ?? '未设置城市'}</div>
+            <div className="text-xs text-white/50 mt-1.5 flex items-center gap-1">
+              📍 {profile?.city ?? '未设置城市'}
+              <span className="text-white/30 ml-1">· 点击编辑资料 ›</span>
+            </div>
           </div>
         </div>
 
