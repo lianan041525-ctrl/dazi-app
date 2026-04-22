@@ -74,7 +74,7 @@ function PostInner() {
       <div className="px-5 py-5 space-y-5">
         <div>
           <label className="text-sm text-white/60">搭子类型</label>
-          <div className="grid grid-cols-4 gap-2 mt-2.5">
+          <div className="grid grid-cols-3 gap-2 mt-2.5">
             {CATEGORIES.map((c) => (
               <button
                 key={c.key}

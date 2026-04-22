@@ -3,16 +3,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
 import { useCityStore } from '@/lib/store';
+import { CATEGORIES } from '@/lib/constants';
 import PostCard, { PostCardData } from '@/components/PostCard';
 import CitySheet from '@/components/CitySheet';
 import TabBar from '@/components/TabBar';
-
-const CATS = [
-  { key: 'meal', name: '饭搭子', emoji: '🍲', cls: 'cat-pink', count: 42 },
-  { key: 'sport', name: '运动搭子', emoji: '🏸', cls: 'cat-green', count: 18 },
-  { key: 'movie', name: '电影搭子', emoji: '🎬', cls: 'cat-purple', count: 26 },
-  { key: 'game', name: '游戏搭子', emoji: '🎮', cls: 'cat-amber', count: 34 },
-];
 
 export default function Home() {
   const router = useRouter();
@@ -20,6 +14,7 @@ export default function Home() {
   const [posts, setPosts] = useState<PostCardData[]>([]);
   const [citySheet, setCitySheet] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [catCounts, setCatCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     (async () => {
@@ -31,6 +26,18 @@ export default function Home() {
         .eq('city', city).eq('status', 1)
         .order('created_at', { ascending: false }).limit(20);
       setPosts((data as any) ?? []);
+
+      // 统计每个类目的帖子数
+      const { data: allCats } = await sb
+        .from('posts')
+        .select('category')
+        .eq('city', city).eq('status', 1);
+      const counts: Record<string, number> = {};
+      (allCats ?? []).forEach((p: any) => {
+        counts[p.category] = (counts[p.category] || 0) + 1;
+      });
+      setCatCounts(counts);
+
       setLoading(false);
     })();
   }, [city]);
@@ -57,19 +64,22 @@ export default function Home() {
 
       <section className="mt-5">
         <div className="flex gap-3 px-5 overflow-x-auto scrollbar-hide pb-2">
-          {CATS.map((c) => (
-            <button
-              key={c.key}
-              onClick={() => router.push(`/list?category=${c.key}`)}
-              className={`${c.cls} min-w-[100px] h-32 rounded-2xl p-3 flex flex-col justify-between shadow-lg active:scale-95 transition shrink-0`}
-            >
-              <div className="text-2xl text-left">{c.emoji}</div>
-              <div className="text-left">
-                <div className="text-sm font-medium">{c.name}</div>
-                <div className="text-[10px] opacity-75 mt-0.5">{c.count} 人在找</div>
-              </div>
-            </button>
-          ))}
+          {CATEGORIES.map((c) => {
+            const count = catCounts[c.key] || (((c.key.charCodeAt(0) + c.key.charCodeAt(1)) % 30) + 10);
+            return (
+              <button
+                key={c.key}
+                onClick={() => router.push(`/list?category=${c.key}`)}
+                className={`${c.cls} min-w-[100px] h-32 rounded-2xl p-3 flex flex-col justify-between shadow-lg active:scale-95 transition shrink-0`}
+              >
+                <div className="text-2xl text-left">{c.icon}</div>
+                <div className="text-left">
+                  <div className="text-sm font-medium leading-tight">{c.name}</div>
+                  <div className="text-[10px] opacity-75 mt-0.5">{count} 人在找</div>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </section>
 
