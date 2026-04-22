@@ -1,8 +1,5 @@
 'use client';
-import { Suspense } from 'react';
-
-export const dynamic = 'force-dynamic';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
 import { CATEGORIES, TIME_OPTIONS } from '@/lib/constants';
@@ -26,18 +23,9 @@ function PostInner() {
   useEffect(() => {
     (async () => {
       const sb = supabaseBrowser();
-      const {
-        data: { user },
-      } = await sb.auth.getUser();
-      if (!user) {
-        router.replace('/login?redirect=/post');
-        return;
-      }
-      const { data } = await sb
-        .from('profiles')
-        .select('wechat_id')
-        .eq('user_id', user.id)
-        .single();
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) { router.replace('/login?redirect=/post'); return; }
+      const { data } = await sb.from('profiles').select('wechat_id').eq('user_id', user.id).single();
       if (data?.wechat_id) setWechat(data.wechat_id);
       setReady(true);
     })();
@@ -46,35 +34,25 @@ function PostInner() {
   const submit = async () => {
     if (!title.trim()) return toast('请填写活动标题');
     if (!content.trim()) return toast('请填写活动描述');
-    if (!wechat.trim()) return toast('请填写微信号，方便对方联系');
+    if (!wechat.trim()) return toast('请填写微信号');
 
     setLoading(true);
     const sb = supabaseBrowser();
-    const {
-      data: { user },
-    } = await sb.auth.getUser();
-    if (!user) {
-      setLoading(false);
-      return router.replace('/login');
-    }
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { setLoading(false); return router.replace('/login'); }
 
-    // 同步保存微信号到 profile
     await sb.from('profiles').update({ wechat_id: wechat }).eq('user_id', user.id);
 
-    const { error } = await sb
-      .from('posts')
-      .insert({
-        user_id: user.id,
-        category,
-        title: title.trim(),
-        content: content.trim(),
-        city,
-        district: district.trim(),
-        meet_time_type: timeType,
-        status: 1,
-      })
-      .select('post_id')
-      .single();
+    const { error } = await sb.from('posts').insert({
+      user_id: user.id,
+      category,
+      title: title.trim(),
+      content: content.trim(),
+      city,
+      district: district.trim(),
+      meet_time_type: timeType,
+      status: 1,
+    }).select('post_id').single();
 
     setLoading(false);
     if (error) return toast(error.message);
@@ -82,96 +60,103 @@ function PostInner() {
     router.replace(`/list?category=${category}`);
   };
 
-  if (!ready) return <div className="p-8 text-center text-gray-400 text-sm">加载中...</div>;
+  if (!ready) return <div className="p-8 text-center text-white/40 text-sm">加载中...</div>;
 
   return (
     <div className="min-h-screen pb-8">
-      <header className="h-12 flex items-center px-4 bg-white sticky top-0 z-10 border-b border-gray-100">
-        <button onClick={() => router.back()} className="text-gray-500 w-6 text-left">
-          ←
-        </button>
-        <h1 className="flex-1 text-center font-medium">发布需求</h1>
-        <div className="w-6" />
+      <header className="h-12 flex items-center px-4 sticky top-0 z-10"
+        style={{ background: 'rgba(15,11,30,0.85)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderBottom: '0.5px solid rgba(255,255,255,0.08)' }}>
+        <button onClick={() => router.back()} className="text-white/60 w-8 text-left text-lg">←</button>
+        <h1 className="flex-1 text-center text-white font-medium">发布需求</h1>
+        <div className="w-8" />
       </header>
 
-      <div className="px-4 py-4 space-y-4">
+      <div className="px-5 py-5 space-y-5">
         <div>
-          <label className="text-sm text-gray-600">搭子类型</label>
-          <div className="grid grid-cols-4 gap-2 mt-2">
+          <label className="text-sm text-white/60">搭子类型</label>
+          <div className="grid grid-cols-4 gap-2 mt-2.5">
             {CATEGORIES.map((c) => (
               <button
                 key={c.key}
                 onClick={() => setCategory(c.key)}
-                className={`py-2.5 rounded-xl text-sm border transition
-                  ${
-                    category === c.key
-                      ? 'border-brand bg-brand-50 text-brand'
-                      : 'border-gray-200 bg-white text-gray-600'
-                  }`}
+                className="py-3 rounded-xl text-xs transition"
+                style={category === c.key ? {
+                  background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)',
+                  color: '#fff',
+                  boxShadow: '0 4px 12px rgba(255,94,120,0.3)',
+                } : {
+                  background: 'rgba(255,255,255,0.04)',
+                  color: 'rgba(255,255,255,0.7)',
+                  border: '0.5px solid rgba(255,255,255,0.08)',
+                }}
               >
-                {c.icon} {c.name}
+                <div className="text-base">{c.icon}</div>
+                <div className="mt-1">{c.name}</div>
               </button>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="text-sm text-gray-600">活动标题</label>
+          <label className="text-sm text-white/60">活动标题</label>
           <input
             value={title}
             maxLength={20}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="例如：周六一起打羽毛球"
-            className="w-full mt-2 h-11 px-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-brand/40"
+            placeholder="例如:周六一起打羽毛球"
+            className="glass-input w-full mt-2.5 h-12 px-4 rounded-xl text-sm"
           />
-          <div className="text-right text-xs text-gray-400 mt-1">{title.length}/20</div>
+          <div className="text-right text-[11px] text-white/30 mt-1">{title.length}/20</div>
         </div>
 
         <div>
-          <label className="text-sm text-gray-600">活动描述</label>
+          <label className="text-sm text-white/60">活动描述</label>
           <textarea
             value={content}
             maxLength={100}
             rows={4}
             onChange={(e) => setContent(e.target.value)}
             placeholder="写清楚时间、地点、想找什么样的人"
-            className="w-full mt-2 p-3 bg-white rounded-xl outline-none resize-none focus:ring-2 focus:ring-brand/40"
+            className="glass-input w-full mt-2.5 p-4 rounded-xl text-sm resize-none"
           />
-          <div className="text-right text-xs text-gray-400">{content.length}/100</div>
+          <div className="text-right text-[11px] text-white/30">{content.length}/100</div>
         </div>
 
         <div className="flex gap-3">
           <div className="flex-1">
-            <label className="text-sm text-gray-600">城市</label>
-            <div className="mt-2 h-11 px-3 bg-white rounded-xl flex items-center text-gray-700">
+            <label className="text-sm text-white/60">城市</label>
+            <div className="glass-input mt-2.5 h-12 px-4 rounded-xl flex items-center text-sm text-white/70">
               📍 {city}
             </div>
           </div>
           <div className="flex-1">
-            <label className="text-sm text-gray-600">区域</label>
+            <label className="text-sm text-white/60">区域</label>
             <input
               value={district}
               maxLength={30}
               onChange={(e) => setDistrict(e.target.value)}
-              placeholder="如：南山区"
-              className="w-full mt-2 h-11 px-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-brand/40"
+              placeholder="如:南山区"
+              className="glass-input w-full mt-2.5 h-12 px-4 rounded-xl text-sm"
             />
           </div>
         </div>
 
         <div>
-          <label className="text-sm text-gray-600">时间</label>
-          <div className="grid grid-cols-4 gap-2 mt-2">
+          <label className="text-sm text-white/60">时间</label>
+          <div className="grid grid-cols-4 gap-2 mt-2.5">
             {TIME_OPTIONS.map((t) => (
               <button
                 key={t.value}
                 onClick={() => setTimeType(t.value)}
-                className={`py-2.5 rounded-xl text-sm border transition
-                  ${
-                    timeType === t.value
-                      ? 'border-brand bg-brand-50 text-brand'
-                      : 'border-gray-200 bg-white text-gray-600'
-                  }`}
+                className="py-3 rounded-xl text-xs transition"
+                style={timeType === t.value ? {
+                  background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)',
+                  color: '#fff',
+                } : {
+                  background: 'rgba(255,255,255,0.04)',
+                  color: 'rgba(255,255,255,0.7)',
+                  border: '0.5px solid rgba(255,255,255,0.08)',
+                }}
               >
                 {t.label}
               </button>
@@ -180,21 +165,21 @@ function PostInner() {
         </div>
 
         <div>
-          <label className="text-sm text-gray-600">微信号（对方联系你用）</label>
+          <label className="text-sm text-white/60">微信号</label>
           <input
             value={wechat}
             maxLength={32}
             onChange={(e) => setWechat(e.target.value)}
             placeholder="填写你的微信号"
-            className="w-full mt-2 h-11 px-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-brand/40"
+            className="glass-input w-full mt-2.5 h-12 px-4 rounded-xl text-sm"
           />
-          <p className="text-xs text-gray-400 mt-1">仅在对方点击「联系」后展示给对方</p>
+          <p className="text-[11px] text-white/30 mt-1.5">仅在对方点击「打招呼」后展示给对方</p>
         </div>
 
         <button
           disabled={loading}
           onClick={submit}
-          className="w-full h-12 bg-brand text-white rounded-xl font-medium disabled:opacity-50 mt-4 active:scale-[0.98] transition"
+          className="btn-gradient w-full h-12 rounded-xl font-medium text-sm disabled:opacity-50 mt-4"
         >
           {loading ? '发布中...' : '发布并开始匹配'}
         </button>
@@ -205,9 +190,9 @@ function PostInner() {
   );
 }
 
-export default function Page() {
+export default function PostPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-gray-400">加载中...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-white/40 text-sm">加载中...</div>}>
       <PostInner />
     </Suspense>
   );

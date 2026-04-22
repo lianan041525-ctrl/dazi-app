@@ -21,42 +21,48 @@ export interface PostCardData {
 export default function PostCard({ post }: { post: PostCardData }) {
   const cat = CATEGORY_MAP[post.category] ?? { name: '其他', icon: '📌' };
   const p = post.profiles;
+  const gender = p?.gender;
+  const genderIcon = gender === 2 ? '♀' : gender === 1 ? '♂' : '';
+  const genderCls = gender === 2 ? 'bg-brand/20 text-pink-200' : 'bg-accent-purple/20 text-purple-200';
 
   return (
-    <Link
-      href={`/detail/${post.post_id}`}
-      className="block bg-white rounded-2xl p-4 shadow-sm active:bg-gray-50"
-    >
-      <div className="flex items-start gap-3">
-        <div className="w-11 h-11 rounded-full bg-brand-50 flex items-center justify-center
-                        text-lg shrink-0 overflow-hidden">
+    <Link href={`/detail/${post.post_id}`} className="glass-card glass-card-hover p-4 block animate-fade-in">
+      <div className="flex items-center gap-3 mb-2.5">
+        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium shrink-0 overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #FF5E78 0%, #6C5CE7 100%)', color: '#fff' }}>
           {p?.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={p.avatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <span>{p?.nickname?.[0] ?? '👤'}</span>
+            <span>{p?.nickname?.[0] ?? '搭'}</span>
           )}
         </div>
-
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium truncate">{p?.nickname ?? '匿名'}</span>
-            {p?.age ? <span className="text-gray-400 text-xs">{p.age}岁</span> : null}
-            <span className="ml-auto text-xs text-gray-400">{timeAgo(post.created_at)}</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-medium text-white truncate">{p?.nickname ?? '匿名'}</span>
+            {genderIcon && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded ${genderCls}`}>
+                {genderIcon} {p?.age ?? ''}
+              </span>
+            )}
           </div>
-
-          <div className="mt-1.5 flex items-center gap-2">
-            <span className="text-xs bg-brand-50 text-brand px-2 py-0.5 rounded-full">
-              {cat.icon} {cat.name}
-            </span>
-            <span className="text-xs text-gray-400">
-              {post.city}{post.district ? `·${post.district}` : ''}
-            </span>
+          <div className="text-[11px] text-white/40 mt-0.5">
+            {post.city}{post.district ? ` · ${post.district}` : ''} · {timeAgo(post.created_at)}
           </div>
-
-          <div className="mt-2 font-medium text-[15px] truncate">{post.title}</div>
-          <div className="mt-1 text-sm text-gray-600 line-clamp-2">{post.content}</div>
         </div>
+        <button className="btn-gradient text-[11px] px-3 py-1.5 rounded-full font-medium shrink-0"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/detail/${post.post_id}`; }}>
+          打招呼
+        </button>
+      </div>
+
+      <div className="text-[15px] font-medium text-white mb-1">{post.title}</div>
+      <p className="text-sm text-white/65 leading-relaxed line-clamp-2">{post.content}</p>
+
+      <div className="flex gap-1.5 mt-2.5">
+        <span className="text-[10px] bg-brand/20 text-pink-200 px-2 py-0.5 rounded-md">
+          {cat.icon} {cat.name}
+        </span>
       </div>
     </Link>
   );

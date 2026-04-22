@@ -1,6 +1,4 @@
 'use client';
-
-export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
@@ -17,20 +15,16 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     (async () => {
       const sb = supabaseBrowser();
-      const { data } = await sb
-        .from('posts')
+      const { data } = await sb.from('posts')
         .select('*,profiles(nickname,avatar,gender,age,wechat_id,city)')
-        .eq('post_id', params.id)
-        .single();
+        .eq('post_id', params.id).single();
       setPost(data);
     })();
   }, [params.id]);
 
   const contact = async () => {
     const sb = supabaseBrowser();
-    const {
-      data: { user },
-    } = await sb.auth.getUser();
+    const { data: { user } } = await sb.auth.getUser();
     if (!user) return router.push(`/login?redirect=/detail/${params.id}`);
     if (user.id === post.user_id) return toast('不能联系自己哦');
 
@@ -48,9 +42,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
   const submitReport = async (reason: string) => {
     const sb = supabaseBrowser();
-    const {
-      data: { user },
-    } = await sb.auth.getUser();
+    const { data: { user } } = await sb.auth.getUser();
     if (!user) return router.push(`/login?redirect=/detail/${params.id}`);
     await sb.from('reports').insert({
       reporter_id: user.id,
@@ -61,114 +53,113 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     toast('举报已提交');
   };
 
-  if (!post)
-    return <div className="p-8 text-center text-gray-400 text-sm">加载中...</div>;
+  if (!post) return <div className="p-8 text-center text-white/40 text-sm">加载中...</div>;
 
   const cat = CATEGORY_MAP[post.category] ?? { name: '其他', icon: '📌' };
   const time = TIME_OPTIONS.find((t) => t.value === post.meet_time_type)?.label ?? '';
   const p = post.profiles;
+  const gender = p?.gender;
+  const genderIcon = gender === 2 ? '♀' : gender === 1 ? '♂' : '';
 
   return (
     <div className="min-h-screen pb-28">
-      <header className="h-12 flex items-center px-4 bg-white sticky top-0 z-10 border-b border-gray-100">
-        <button onClick={() => router.back()} className="text-gray-500 w-6 text-left">
-          ←
-        </button>
-        <h1 className="flex-1 text-center font-medium">详情</h1>
-        <button
-          onClick={() => setReportOpen(true)}
-          className="text-gray-400 text-xs w-10 text-right"
-        >
-          举报
-        </button>
+      <header className="h-12 flex items-center px-4 sticky top-0 z-10"
+        style={{ background: 'rgba(15,11,30,0.85)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderBottom: '0.5px solid rgba(255,255,255,0.08)' }}>
+        <button onClick={() => router.back()} className="text-white/60 w-10 text-left text-lg">←</button>
+        <h1 className="flex-1 text-center text-white font-medium">详情</h1>
+        <button onClick={() => setReportOpen(true)} className="text-white/50 text-xs w-10 text-right">举报</button>
       </header>
 
-      <div className="bg-white p-4 flex items-center gap-3">
-        <div className="w-14 h-14 rounded-full bg-brand-50 flex items-center justify-center text-xl overflow-hidden shrink-0">
-          {p?.avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.avatar} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <span>{p?.nickname?.[0] ?? '👤'}</span>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-medium truncate">{p?.nickname}</div>
-          <div className="text-xs text-gray-400 mt-0.5">
-            {p?.age ? `${p.age}岁 · ` : ''}
-            {post.city}
-            {post.district ? `·${post.district}` : ''}
+      <div className="p-5">
+        <div className="glass-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-medium overflow-hidden shrink-0"
+              style={{ background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)', color: '#fff' }}>
+              {p?.avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={p.avatar} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span>{p?.nickname?.[0] ?? '搭'}</span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-white font-medium truncate">{p?.nickname}</span>
+                {genderIcon && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded"
+                    style={{ background: gender === 2 ? 'rgba(255,94,120,0.2)' : 'rgba(108,92,231,0.2)', color: gender === 2 ? '#FFC4D0' : '#B8B0E8' }}>
+                    {genderIcon} {p?.age ?? ''}
+                  </span>
+                )}
+              </div>
+              <div className="text-xs text-white/50 mt-1">
+                {post.city}{post.district ? ` · ${post.district}` : ''}
+              </div>
+            </div>
+            <span className="text-xs text-white/40 shrink-0">{timeAgo(post.created_at)}</span>
           </div>
         </div>
-        <span className="text-xs text-gray-400 shrink-0">{timeAgo(post.created_at)}</span>
-      </div>
 
-      <div className="mt-3 bg-white p-4">
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-xs bg-brand-50 text-brand px-2 py-1 rounded-full">
-            {cat.icon} {cat.name}
-          </span>
-          {time && (
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-              🕐 {time}
+        <div className="glass-card p-4 mt-3">
+          <div className="flex gap-2 flex-wrap">
+            <span className="text-[11px] px-2 py-1 rounded-md" style={{ background: 'rgba(255,94,120,0.2)', color: '#FFC4D0' }}>
+              {cat.icon} {cat.name}
             </span>
-          )}
+            {time && (
+              <span className="text-[11px] px-2 py-1 rounded-md bg-white/6 text-white/60">
+                🕒 {time}
+              </span>
+            )}
+          </div>
+          <h2 className="text-lg font-semibold text-white mt-3">{post.title}</h2>
+          <p className="text-sm text-white/75 leading-relaxed mt-2 whitespace-pre-wrap">{post.content}</p>
         </div>
-        <h2 className="text-lg font-semibold mt-3">{post.title}</h2>
-        <p className="text-sm text-gray-700 leading-relaxed mt-2 whitespace-pre-wrap">
-          {post.content}
-        </p>
+
+        {wechatRevealed && (
+          <div className="glass-card p-4 mt-3" style={{ background: 'rgba(6,214,160,0.08)', borderColor: 'rgba(6,214,160,0.2)' }}>
+            <div className="text-xs text-accent-green">对方微信号</div>
+            <div className="text-lg font-semibold text-white mt-1.5 flex items-center gap-3">
+              <span className="font-mono">{wechatRevealed}</span>
+              <button
+                onClick={() => { navigator.clipboard.writeText(wechatRevealed); toast('已复制'); }}
+                className="text-[11px] px-3 py-1 rounded-full"
+                style={{ background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)', color: '#fff' }}
+              >
+                复制
+              </button>
+            </div>
+            <div className="text-xs text-white/50 mt-2">打开微信添加好友,记得说明来意 ~</div>
+          </div>
+        )}
       </div>
 
-      {wechatRevealed && (
-        <div className="mt-3 bg-white p-4">
-          <div className="text-sm text-gray-500">对方微信号</div>
-          <div className="text-lg font-semibold mt-1 flex items-center gap-2">
-            <span className="font-mono">{wechatRevealed}</span>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(wechatRevealed);
-                toast('已复制');
-              }}
-              className="text-xs text-brand border border-brand px-2 py-0.5 rounded"
-            >
-              复制
-            </button>
-          </div>
-          <div className="text-xs text-gray-400 mt-2">
-            打开微信添加好友，记得说明来意 ~
-          </div>
-        </div>
-      )}
-
-      <footer className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white p-3 border-t border-gray-100 safe-bottom">
+      <footer className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 safe-bottom z-20"
+        style={{ background: 'rgba(15,11,30,0.9)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderTop: '0.5px solid rgba(255,255,255,0.08)' }}>
         <button
           onClick={contact}
           disabled={loading || !!wechatRevealed}
-          className="w-full h-12 bg-brand text-white rounded-xl font-medium disabled:opacity-60 active:scale-[0.98] transition"
+          className="btn-gradient w-full h-12 rounded-xl font-medium disabled:opacity-60"
         >
-          {wechatRevealed ? '已获取联系方式' : loading ? '请稍候...' : '立即联系'}
+          {wechatRevealed ? '已获取联系方式' : loading ? '请稍候...' : '打招呼'}
         </button>
       </footer>
 
-      {/* 举报弹窗 */}
       {reportOpen && (
-        <div
-          className="fixed inset-0 z-50"
-          onClick={() => setReportOpen(false)}
-        >
-          <div className="absolute inset-0 bg-black/40" />
+        <div className="fixed inset-0 z-50" onClick={() => setReportOpen(false)}>
+          <div className="absolute inset-0 bg-black/60" />
           <div
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white rounded-t-3xl p-5 safe-bottom"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-5 safe-bottom rounded-t-3xl"
+            style={{ background: '#1A1530', border: '0.5px solid rgba(255,255,255,0.08)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-lg font-semibold text-center mb-4">举报原因</div>
+            <div className="text-center text-white font-semibold mb-4">举报原因</div>
             <div className="space-y-2">
               {['骚扰辱骂', '虚假信息', '色情低俗', '诈骗引流', '其他'].map((r) => (
                 <button
                   key={r}
                   onClick={() => submitReport(r)}
-                  className="w-full py-3 text-sm bg-gray-50 rounded-xl"
+                  className="w-full py-3 text-sm text-white/80 rounded-xl"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.06)' }}
                 >
                   {r}
                 </button>
@@ -176,7 +167,8 @@ export default function DetailPage({ params }: { params: { id: string } }) {
             </div>
             <button
               onClick={() => setReportOpen(false)}
-              className="w-full mt-3 py-3 bg-gray-100 rounded-xl text-sm"
+              className="w-full mt-3 py-3 rounded-xl text-sm text-white/50"
+              style={{ background: 'rgba(255,255,255,0.02)' }}
             >
               取消
             </button>

@@ -3,10 +3,16 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
 import { useCityStore } from '@/lib/store';
-import CategoryGrid from '@/components/CategoryGrid';
 import PostCard, { PostCardData } from '@/components/PostCard';
 import CitySheet from '@/components/CitySheet';
 import TabBar from '@/components/TabBar';
+
+const CATS = [
+  { key: 'meal', name: '饭搭子', emoji: '🍲', cls: 'cat-pink', count: 42 },
+  { key: 'sport', name: '运动搭子', emoji: '🏸', cls: 'cat-green', count: 18 },
+  { key: 'movie', name: '电影搭子', emoji: '🎬', cls: 'cat-purple', count: 26 },
+  { key: 'game', name: '游戏搭子', emoji: '🎮', cls: 'cat-amber', count: 34 },
+];
 
 export default function Home() {
   const router = useRouter();
@@ -21,65 +27,71 @@ export default function Home() {
       const sb = supabaseBrowser();
       const { data } = await sb
         .from('posts')
-        .select(
-          'post_id,category,title,content,city,district,created_at,profiles(nickname,avatar,gender,age)'
-        )
-        .eq('city', city)
-        .eq('status', 1)
-        .order('created_at', { ascending: false })
-        .limit(20);
+        .select('post_id,category,title,content,city,district,created_at,profiles(nickname,avatar,gender,age)')
+        .eq('city', city).eq('status', 1)
+        .order('created_at', { ascending: false }).limit(20);
       setPosts((data as any) ?? []);
       setLoading(false);
     })();
   }, [city]);
 
+  const total = posts.length + 120;
+
   return (
-    <div className="pb-20">
-      <header className="px-4 pt-4 pb-3 bg-gradient-to-b from-brand-50 to-transparent flex items-center">
-        <button
-          onClick={() => setCitySheet(true)}
-          className="flex items-center gap-1 text-sm"
-        >
-          📍 <span className="font-medium">{city}</span>
-          <span className="text-gray-400">▾</span>
+    <div className="pb-24">
+      <header className="pt-3 px-5 flex items-center justify-between">
+        <button onClick={() => setCitySheet(true)} className="flex items-center gap-2 text-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-green inline-block" />
+          <span className="text-white/80">{city} · 在线 {total * 3}</span>
+          <span className="text-white/40 text-xs">▾</span>
         </button>
-        <div className="ml-auto text-xs text-gray-500">附近搭子</div>
+        <button onClick={() => router.push('/mine')} className="w-9 h-9 rounded-full bg-white/8 border border-white/10 flex items-center justify-center text-xs text-white/70">
+          我
+        </button>
       </header>
 
-      <section className="px-4 pt-2">
-        <h1 className="text-2xl font-bold leading-tight">
-          同城找搭子
-          <br />
-          马上约起来
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">吃饭 · 运动 · 电影 · 游戏</p>
+      <section className="px-5 pt-6">
+        <h1 className="gradient-text text-3xl font-medium leading-tight">今晚,和谁一起?</h1>
+        <p className="text-white/50 text-xs mt-2">附近 {total} 人正在寻找搭子</p>
       </section>
 
-      <CategoryGrid />
+      <section className="mt-5">
+        <div className="flex gap-3 px-5 overflow-x-auto scrollbar-hide pb-2">
+          {CATS.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => router.push(`/list?category=${c.key}`)}
+              className={`${c.cls} min-w-[100px] h-32 rounded-2xl p-3 flex flex-col justify-between shadow-lg active:scale-95 transition shrink-0`}
+            >
+              <div className="text-2xl text-left">{c.emoji}</div>
+              <div className="text-left">
+                <div className="text-sm font-medium">{c.name}</div>
+                <div className="text-[10px] opacity-75 mt-0.5">{c.count} 人在找</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
 
-      <button
-        onClick={() => router.push('/post')}
-        className="mx-4 mt-4 h-12 w-[calc(100%-2rem)] bg-brand text-white rounded-xl font-medium shadow-lg shadow-brand/30 active:scale-[0.98] transition"
-      >
-        发布我的需求
-      </button>
-
-      <section className="px-4 mt-5">
-        <div className="flex items-center mb-3">
-          <h2 className="text-base font-semibold">附近最新</h2>
-          <button
-            onClick={() => router.push('/list')}
-            className="ml-auto text-xs text-gray-500"
-          >
+      <section className="px-5 mt-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-white text-base font-medium">最新需求</h2>
+          <button onClick={() => router.push('/list')} className="text-white/50 text-xs">
             查看全部 ›
           </button>
         </div>
+
         <div className="space-y-3">
           {loading ? (
-            <div className="text-center text-gray-400 text-sm py-12">加载中...</div>
+            <div className="text-center text-white/40 text-sm py-12">加载中...</div>
           ) : posts.length === 0 ? (
-            <div className="text-center text-gray-400 text-sm py-12">
-              暂无数据，来发第一条吧
+            <div className="glass-card p-8 text-center">
+              <div className="text-4xl mb-3">✨</div>
+              <p className="text-white/60 text-sm">还没有人发布需求</p>
+              <p className="text-white/40 text-xs mt-1">来做第一个吧</p>
+              <button onClick={() => router.push('/post')} className="btn-gradient mt-4 px-6 py-2 rounded-full text-sm font-medium">
+                发布需求
+              </button>
             </div>
           ) : (
             posts.map((p) => <PostCard key={p.post_id} post={p} />)

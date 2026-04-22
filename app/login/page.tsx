@@ -2,28 +2,23 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
-import { toast } from '@/components/Toast';
-import Toast from '@/components/Toast';
+import Toast, { toast } from '@/components/Toast';
 
 function LoginInner() {
   const router = useRouter();
   const params = useSearchParams();
   const redirect = params.get('redirect') || '/';
-
-  const [phone, setPhone]       = useState('');
-  const [otp, setOtp]           = useState('');
-  const [sent, setSent]         = useState(false);
-  const [countdown, setCount]   = useState(0);
-  const [loading, setLoading]   = useState(false);
-
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [sent, setSent] = useState(false);
+  const [countdown, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const supabase = supabaseBrowser();
 
   const sendOtp = async () => {
-    if (!phone.includes('@')) return toast('请输入正确邮箱');
+    if (!email.includes('@')) return toast('请输入正确邮箱');
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email: phone,
-    });
+    const { error } = await supabase.auth.signInWithOtp({ email });
     setLoading(false);
     if (error) return toast(error.message);
     setSent(true);
@@ -31,16 +26,13 @@ function LoginInner() {
     const t = setInterval(() => {
       setCount((c) => { if (c <= 1) { clearInterval(t); return 0; } return c - 1; });
     }, 1000);
+    toast('验证码已发送到邮箱');
   };
 
   const verify = async () => {
-    if (otp.length !== 6) return toast('请输入6位验证码');
+    if (otp.length !== 6) return toast('请输入 6 位验证码');
     setLoading(true);
-    const { error } = await supabase.auth.verifyOtp({
-      email: phone,
-      token: otp,
-      type: 'email',
-    });
+    const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'email' });
     setLoading(false);
     if (error) return toast(error.message);
     toast('登录成功');
@@ -50,33 +42,37 @@ function LoginInner() {
 
   return (
     <div className="min-h-screen flex flex-col px-6 pt-14">
-      <button onClick={() => router.back()} className="text-gray-500 text-sm w-fit">← 返回</button>
+      <button onClick={() => router.back()} className="text-white/50 text-sm w-fit">← 返回</button>
 
-      <h1 className="mt-10 text-2xl font-bold">登录附近搭子</h1>
-      <p className="text-gray-500 text-sm mt-1">登录后发布需求、联系搭子</p>
+      <div className="mt-14">
+        <h1 className="gradient-text text-3xl font-medium leading-tight">欢迎回来</h1>
+        <p className="text-white/50 text-sm mt-2">登录后发现同城的搭子</p>
+      </div>
 
-      <div className="mt-8 space-y-3">
-        <div className="flex items-center bg-white rounded-xl px-4 h-12">
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="请输入邮箱"
-            className="flex-1 bg-transparent outline-none"
-          />
-        </div>
-
-        <div className="flex items-center bg-white rounded-xl px-4 h-12">
+      <div className="mt-10 space-y-3">
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="邮箱"
+          className="glass-input w-full h-12 px-4 rounded-xl text-sm"
+        />
+        <div className="glass-input h-12 px-4 rounded-xl flex items-center">
           <input
             inputMode="numeric" maxLength={6}
             value={otp}
             onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-            placeholder="6位验证码"
-            className="flex-1 bg-transparent outline-none"
+            placeholder="6 位验证码"
+            className="flex-1 bg-transparent outline-none text-sm text-white placeholder-white/35"
           />
           <button
             disabled={countdown > 0 || loading}
             onClick={sendOtp}
-            className="text-brand text-sm disabled:text-gray-400"
+            className="text-sm font-medium"
+            style={{
+              background: countdown > 0 ? 'transparent' : 'linear-gradient(135deg, #FF5E78, #6C5CE7)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: countdown > 0 ? 'rgba(255,255,255,0.3)' : 'transparent',
+            }}
           >
             {countdown > 0 ? `${countdown}s` : sent ? '重新发送' : '获取验证码'}
           </button>
@@ -86,12 +82,12 @@ function LoginInner() {
       <button
         disabled={loading}
         onClick={verify}
-        className="mt-6 h-12 bg-brand text-white rounded-xl font-medium disabled:opacity-50"
+        className="btn-gradient mt-8 h-12 rounded-xl font-medium text-sm disabled:opacity-50"
       >
         {loading ? '登录中...' : '登录 / 注册'}
       </button>
 
-      <p className="mt-6 text-xs text-gray-400 text-center">
+      <p className="mt-8 text-[11px] text-white/30 text-center leading-relaxed">
         登录即代表同意《用户协议》与《隐私政策》
       </p>
 
@@ -102,7 +98,7 @@ function LoginInner() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-gray-400">加载中...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-white/40 text-sm">加载中...</div>}>
       <LoginInner />
     </Suspense>
   );

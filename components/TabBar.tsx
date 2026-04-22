@@ -1,49 +1,35 @@
 'use client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-
-const tabs = [
-  { href: '/',     label: '首页',   icon: '🏠' },
-  { href: '/post', label: '发布',   icon: '➕', primary: true },
-  { href: '/mine', label: '我的',   icon: '👤' },
-];
+import { usePathname } from 'next/navigation';
 
 export default function TabBar() {
   const pathname = usePathname();
-  const router = useRouter();
+  const isHome = pathname === '/';
+  const isMine = pathname?.startsWith('/mine');
 
   return (
-    <>
-      <div className="h-16" />
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px]
-                      bg-white border-t border-gray-100 flex safe-bottom z-40">
-        {tabs.map((t) => {
-          const active = pathname === t.href;
-          if (t.primary) {
-            return (
-              <button
-                key={t.href}
-                onClick={() => router.push(t.href)}
-                className="flex-1 flex flex-col items-center justify-center py-2"
-              >
-                <span className="w-11 h-11 rounded-full bg-brand text-white flex items-center
-                                 justify-center text-2xl -mt-6 shadow-lg shadow-brand/40">
-                  {t.icon}
-                </span>
-                <span className="text-xs mt-1 text-gray-500">{t.label}</span>
-              </button>
-            );
-          }
-          return (
-            <Link key={t.href} href={t.href}
-              className={`flex-1 flex flex-col items-center justify-center py-2
-                          ${active ? 'text-brand' : 'text-gray-500'}`}>
-              <span className="text-xl">{t.icon}</span>
-              <span className="text-xs mt-0.5">{t.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-    </>
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] safe-bottom z-30"
+      style={{ background: 'rgba(15, 11, 30, 0.85)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderTop: '0.5px solid rgba(255,255,255,0.08)' }}>
+      <div className="h-16 flex justify-around items-center px-5">
+        <Link href="/" className="text-center flex-1">
+          <div className={`w-1.5 h-1.5 rounded-full mx-auto mb-1 ${isHome ? '' : 'bg-white/30'}`}
+            style={isHome ? { background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)' } : undefined} />
+          <div className={`text-[10px] ${isHome ? 'text-white' : 'text-white/50'}`}>发现</div>
+        </Link>
+
+        <Link href="/post" className="flex-shrink-0">
+          <div className="btn-gradient w-14 h-14 rounded-full flex items-center justify-center -mt-6"
+            style={{ boxShadow: '0 8px 24px rgba(255, 94, 120, 0.5)' }}>
+            <span className="text-white text-2xl font-light leading-none">+</span>
+          </div>
+        </Link>
+
+        <Link href="/mine" className="text-center flex-1">
+          <div className={`w-1.5 h-1.5 rounded-full mx-auto mb-1 ${isMine ? '' : 'bg-white/30'}`}
+            style={isMine ? { background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)' } : undefined} />
+          <div className={`text-[10px] ${isMine ? 'text-white' : 'text-white/50'}`}>我的</div>
+        </Link>
+      </div>
+    </nav>
   );
 }
