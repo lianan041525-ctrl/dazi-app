@@ -68,7 +68,7 @@ export default function MatchPage() {
     (async () => {
       const sb = supabaseBrowser();
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) { router.replace('/login?redirect=/match'); return; }
+      // 未登录也允许浏览匹配页
 
       const { data: myProfile } = await sb
         .from('profiles')
