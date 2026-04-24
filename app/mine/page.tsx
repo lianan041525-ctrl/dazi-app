@@ -11,12 +11,13 @@ export default function MinePage() {
   const [profile, setProfile] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notLoggedIn, setNotLoggedIn] = useState(false);
 
   useEffect(() => {
     (async () => {
       const sb = supabaseBrowser();
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) { router.replace('/login?redirect=/mine'); return; }
+      if (!user) { setNotLoggedIn(true); setLoading(false); return; }
       const { data: p } = await sb.from('profiles').select('*').eq('user_id', user.id).single();
       setProfile(p);
       const { data: list } = await sb.from('posts').select('*')
@@ -46,6 +47,67 @@ export default function MinePage() {
     toast('已删除');
   };
 
+  // 未登录引导态
+  if (notLoggedIn) {
+    return (
+      <div className="min-h-screen pb-24">
+        <header className="px-5 pt-14 pb-6 relative overflow-hidden">
+          <div className="absolute inset-0 -z-10" style={{
+            background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,94,120,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(108,92,231,0.2) 0%, transparent 60%)',
+          }} />
+          <h1 className="text-2xl font-bold text-white">我的</h1>
+        </header>
+
+        <section className="px-5 mt-6">
+          <div className="glass-card p-8 text-center">
+            <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl"
+              style={{
+                background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)',
+                boxShadow: '0 8px 24px rgba(255,94,120,0.3)',
+              }}>
+              👤
+            </div>
+            <div className="text-white text-base font-semibold">登录查看你的主页</div>
+            <div className="text-white/50 text-xs mt-2 leading-relaxed">
+              登录后你可以管理发布、查看统计<br />
+              以及被多少搭子联系过 💕
+            </div>
+            <button
+              onClick={() => router.push('/login?redirect=/mine')}
+              className="btn-gradient mt-6 px-8 h-10 rounded-full text-sm font-semibold"
+            >
+              立即登录
+            </button>
+            <button
+              onClick={() => router.push('/')}
+              className="block mx-auto mt-3 text-white/40 text-xs"
+            >
+              先去逛逛
+            </button>
+          </div>
+
+          {/* 产品亮点展示(未登录用户看到的"诱饵") */}
+          <div className="mt-6 grid grid-cols-3 gap-2">
+            <div className="glass-card p-3 text-center opacity-60">
+              <div className="text-2xl mb-1">📝</div>
+              <div className="text-[10px] text-white/50">管理发布</div>
+            </div>
+            <div className="glass-card p-3 text-center opacity-60">
+              <div className="text-2xl mb-1">📊</div>
+              <div className="text-[10px] text-white/50">数据统计</div>
+            </div>
+            <div className="glass-card p-3 text-center opacity-60">
+              <div className="text-2xl mb-1">💬</div>
+              <div className="text-[10px] text-white/50">联系记录</div>
+            </div>
+          </div>
+        </section>
+
+        <TabBar />
+      </div>
+    );
+  }
+
   if (loading) return <div className="p-8 text-center text-white/40 text-sm">加载中...</div>;
 
   return (
@@ -55,7 +117,6 @@ export default function MinePage() {
           background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,94,120,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(108,92,231,0.2) 0%, transparent 60%)',
         }} />
 
-        {/* 整个头像区域可点击 */}
         <button
           onClick={() => router.push('/mine/edit')}
           className="flex items-center gap-4 w-full text-left active:opacity-80 transition"

@@ -11,6 +11,7 @@ type SubTab = 'received' | 'sent';
 export default function MessagesPage() {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
+  const [notLoggedIn, setNotLoggedIn] = useState(false);
   const [subTab, setSubTab] = useState<SubTab>('received');
   const [receivedLogs, setReceivedLogs] = useState<any[]>([]);
   const [sentLogs, setSentLogs] = useState<any[]>([]);
@@ -20,10 +21,9 @@ export default function MessagesPage() {
     (async () => {
       const sb = supabaseBrowser();
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) { router.replace('/login?redirect=/messages'); return; }
+      if (!user) { setNotLoggedIn(true); setLoading(false); return; }
       setUserId(user.id);
 
-      // 收到的:to_user_id = 我
       const { data: received } = await sb
         .from('contact_logs')
         .select('id, created_at, from_user_id, to_user_id, post_id, greeting, posts(post_id, title, category)')
@@ -31,7 +31,6 @@ export default function MessagesPage() {
         .order('created_at', { ascending: false })
         .limit(30);
 
-      // 获取 from_user 的 profile
       const fromUserIds = [...new Set((received ?? []).map((l: any) => l.from_user_id))];
       const { data: fromProfiles } = fromUserIds.length > 0
         ? await sb.from('profiles').select('user_id,nickname,gender,age,city').in('user_id', fromUserIds)
@@ -43,7 +42,6 @@ export default function MessagesPage() {
         otherProfile: fromMap[l.from_user_id] || null,
       })));
 
-      // 我发出的:from_user_id = 我
       const { data: sent } = await sb
         .from('contact_logs')
         .select('id, created_at, from_user_id, to_user_id, post_id, greeting, posts(post_id, title, category)')
@@ -70,6 +68,45 @@ export default function MessagesPage() {
 
   const activeLogs = subTab === 'received' ? receivedLogs : sentLogs;
 
+  // 未登录引导态
+  if (notLoggedIn) {
+    return (
+      <div className="min-h-screen pb-24">
+        <header className="px-5 pt-14 pb-4 relative">
+          <div className="absolute inset-0 -z-10" style={{
+            background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,107,157,0.18) 0%, transparent 60%)',
+          }} />
+          <h1 className="text-2xl font-bold text-white">消息</h1>
+        </header>
+
+        <section className="px-5 mt-10">
+          <div className="glass-card p-8 text-center">
+            <div className="text-5xl mb-4">💌</div>
+            <div className="text-white text-base font-semibold">登录后查看你的消息</div>
+            <div className="text-white/50 text-xs mt-2 leading-relaxed">
+              登录后,你会看到<br />
+              谁拿走了你的微信号,以及你联系过的搭子
+            </div>
+            <button
+              onClick={() => router.push('/login?redirect=/messages')}
+              className="btn-gradient mt-6 px-8 h-10 rounded-full text-sm font-semibold"
+            >
+              立即登录
+            </button>
+            <button
+              onClick={() => router.push('/')}
+              className="block mx-auto mt-3 text-white/40 text-xs"
+            >
+              先去逛逛
+            </button>
+          </div>
+        </section>
+
+        <TabBar />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pb-24">
       <header className="px-5 pt-14 pb-4 relative">
@@ -79,7 +116,6 @@ export default function MessagesPage() {
         <h1 className="text-2xl font-bold text-white">消息</h1>
       </header>
 
-      {/* 4 宫格入口 */}
       <section className="px-5 mt-2">
         <div className="glass-card p-4">
           <div className="grid grid-cols-4 gap-2">
@@ -109,7 +145,6 @@ export default function MessagesPage() {
         </div>
       </section>
 
-      {/* Sub Tabs */}
       <section className="px-5 mt-5">
         <div className="flex gap-2 mb-3">
           {[
@@ -173,7 +208,6 @@ export default function MessagesPage() {
                   onClick={() => post && router.push(`/detail/${post.post_id}`)}
                   className="glass-card p-3.5 w-full text-left active:opacity-80 transition flex items-start gap-3"
                 >
-                  {/* 头像 */}
                   <div className="w-11 h-11 rounded-full shrink-0 flex items-center justify-center text-base font-semibold text-white"
                     style={{ background: 'linear-gradient(135deg, #FF6B9D, #C026D3)' }}>
                     {firstChar}
@@ -192,7 +226,6 @@ export default function MessagesPage() {
                       )}
                       <span className="ml-auto text-[10px] text-white/40 shrink-0">{timeAgo(log.created_at)}</span>
                     </div>
-                    {/* 打招呼内容(如果有) */}
                     {log.greeting && (
                       <div className="text-xs text-white/85 mt-1 line-clamp-2 leading-relaxed"
                         style={{

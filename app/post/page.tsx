@@ -19,12 +19,13 @@ function PostInner() {
   const [wechat, setWechat] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+  const [notLoggedIn, setNotLoggedIn] = useState(false);
 
   useEffect(() => {
     (async () => {
       const sb = supabaseBrowser();
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) { router.replace('/login?redirect=/post'); return; }
+      if (!user) { setNotLoggedIn(true); return; }
       const { data } = await sb.from('profiles').select('wechat_id').eq('user_id', user.id).single();
       if (data?.wechat_id) setWechat(data.wechat_id);
       setReady(true);
@@ -59,6 +60,51 @@ function PostInner() {
     toast('发布成功');
     router.replace(`/list?category=${category}`);
   };
+
+  // 未登录引导态
+  if (notLoggedIn) {
+    return (
+      <div className="min-h-screen pb-8">
+        <header className="h-12 flex items-center px-4 sticky top-0 z-10"
+          style={{ background: 'rgba(15,11,30,0.85)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderBottom: '0.5px solid rgba(255,255,255,0.08)' }}>
+          <button onClick={() => router.back()} className="text-white/60 w-8 text-left text-lg">←</button>
+          <h1 className="flex-1 text-center text-white font-medium">发布需求</h1>
+          <div className="w-8" />
+        </header>
+
+        <section className="px-5 mt-16">
+          <div className="glass-card p-8 text-center">
+            <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl"
+              style={{
+                background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)',
+                boxShadow: '0 8px 24px rgba(255,94,120,0.3)',
+              }}>
+              ✨
+            </div>
+            <div className="text-white text-base font-semibold">登录后才能发布搭子需求</div>
+            <div className="text-white/50 text-xs mt-2 leading-relaxed">
+              登录后,你就可以<br />
+              发布需求、接收打招呼、管理自己的帖子 🌸
+            </div>
+            <button
+              onClick={() => router.push('/login?redirect=/post')}
+              className="btn-gradient mt-6 px-8 h-10 rounded-full text-sm font-semibold"
+            >
+              立即登录
+            </button>
+            <button
+              onClick={() => router.push('/')}
+              className="block mx-auto mt-3 text-white/40 text-xs"
+            >
+              先去逛逛
+            </button>
+          </div>
+        </section>
+
+        <Toast />
+      </div>
+    );
+  }
 
   if (!ready) return <div className="p-8 text-center text-white/40 text-sm">加载中...</div>;
 
