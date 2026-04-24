@@ -1,21 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
       colors: {
-        brand: { DEFAULT: '#FF5E78', 50: '#FFE8ED', 100: '#FFD1DA', 600: '#E8395A', 900: '#7A1A2E' },
-        accent: { purple: '#6C5CE7', green: '#06D6A0', amber: '#FFD93D' },
-        bg: { DEFAULT: '#0F0B1E', surface: 'rgba(255,255,255,0.04)' },
+        // v3 品牌色:粉 → 暖橙
+        brand: '#FF6B9D',
+        brand2: '#FF8C35',
+        'accent-purple': '#C026D3',
+        'accent-green': '#4ADE80',
+        'accent-red': '#F87171',
+        bg: '#0A0A18',
+        'bg-card': '#13131F',
+        'bg-card-2': '#1A1A2E',
       },
-      animation: {
-        'fade-in': 'fadeIn 0.3s ease-out',
+      fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(8px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
+      backgroundImage: {
+        'brand-grad': 'linear-gradient(135deg, #FF6B9D, #FF8C35)',
+        'brand-grad-3': 'linear-gradient(135deg, #FF6B9D, #C026D3, #FF8C35)',
       },
     },
   },

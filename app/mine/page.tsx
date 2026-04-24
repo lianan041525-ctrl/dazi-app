@@ -54,24 +54,36 @@ export default function MinePage() {
         <div className="absolute inset-0 -z-10" style={{
           background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,94,120,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(108,92,231,0.2) 0%, transparent 60%)',
         }} />
-        <div className="flex items-center gap-4 cursor-pointer" onClick={() => router.push("/mine/edit")}>
+
+        {/* 整个头像区域可点击 */}
+        <button
+          onClick={() => router.push('/mine/edit')}
+          className="flex items-center gap-4 w-full text-left active:opacity-80 transition"
+        >
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-medium overflow-hidden shrink-0"
             style={{ background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)', color: '#fff', boxShadow: '0 8px 24px rgba(255,94,120,0.3)' }}>
-            {profile?.avatar ? (
+            {profile?.avatar_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={profile.avatar} alt="" className="w-full h-full object-cover" />
+              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
             ) : (
               <span>{profile?.nickname?.[0] ?? '搭'}</span>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xl font-semibold text-white truncate">{profile?.nickname}</div>
-            <div className="text-xs text-white/50 mt-1.5 flex items-center gap-1">
-              📍 {profile?.city ?? '未设置城市'}
-              <span className="text-white/30 ml-1">· 点击编辑资料 ›</span>
+            <div className="flex items-center gap-2">
+              <div className="text-xl font-semibold text-white truncate">{profile?.nickname}</div>
+              {profile?.gender === 1 && <span className="text-[11px] px-1.5 py-0.5 rounded bg-accent-purple/20 text-purple-200">♂ {profile?.age ?? ''}</span>}
+              {profile?.gender === 2 && <span className="text-[11px] px-1.5 py-0.5 rounded bg-brand/20 text-pink-200">♀ {profile?.age ?? ''}</span>}
             </div>
+            <div className="text-xs text-white/50 mt-1.5 flex items-center gap-1">
+              📍 {profile?.city ?? '未设置'}
+              <span className="text-white/40 ml-1">· 编辑资料 ›</span>
+            </div>
+            {profile?.bio && (
+              <div className="text-xs text-white/60 mt-2 line-clamp-2">{profile.bio}</div>
+            )}
           </div>
-        </div>
+        </button>
 
         <div className="grid grid-cols-3 gap-2 mt-5">
           <div className="glass-card p-3 text-center">

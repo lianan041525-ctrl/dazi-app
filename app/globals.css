@@ -2,18 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --text-primary: #FFFFFF;
-  --text-secondary: rgba(255, 255, 255, 0.65);
-  --text-tertiary: rgba(255, 255, 255, 0.4);
-}
-
-* { -webkit-tap-highlight-color: transparent; }
-
+/* ===== v3 配色 body ===== */
 html, body {
-  background: #0F0B1E;
-  color: #FFFFFF;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  background: #0A0A18;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
   min-height: 100vh;
   margin: 0;
   padding: 0;
@@ -22,99 +15,104 @@ html, body {
 
 body {
   background:
-    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(108, 92, 231, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(255, 94, 120, 0.1) 0%, transparent 50%),
-    #0F0B1E;
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(255,107,157,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(192,38,211,0.15) 0%, transparent 50%),
+    #0A0A18;
   background-attachment: fixed;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #FFFFFF 0%, #FFC4D0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+* { -webkit-tap-highlight-color: transparent; }
+::-webkit-scrollbar { display: none; }
 
-.gradient-brand {
-  background: linear-gradient(135deg, #FF5E78 0%, #6C5CE7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
+/* ===== 玻璃卡片 ===== */
 .glass-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px;
 }
-
-.glass-card-hover:active {
-  background: rgba(255, 255, 255, 0.07);
-  transform: scale(0.99);
-}
-
-.btn-gradient {
-  background: linear-gradient(135deg, #FF5E78 0%, #6C5CE7 100%);
-  color: white;
-  border: none;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 16px rgba(255, 94, 120, 0.3);
-}
-
-.btn-gradient:active {
-  transform: scale(0.97);
-  box-shadow: 0 2px 8px rgba(255, 94, 120, 0.3);
-}
-
-.btn-gradient:disabled {
-  opacity: 0.5;
-  box-shadow: none;
-}
-
-.cat-pink { background: linear-gradient(145deg, #FF5E78 0%, #FF9A8B 100%); color: #FFFFFF; }
-.cat-green { background: linear-gradient(145deg, #06D6A0 0%, #1DE9B6 100%); color: #003D2E; }
-.cat-purple { background: linear-gradient(145deg, #6C5CE7 0%, #8B7FE8 100%); color: #FFFFFF; }
-.cat-amber { background: linear-gradient(145deg, #FFD93D 0%, #FFA62B 100%); color: #4A2F00; }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.06);
-  border: 0.5px solid rgba(255, 255, 255, 0.12);
-  color: #FFFFFF;
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  color: #fff;
   outline: none;
-  transition: all 0.2s;
+  transition: border 0.2s;
 }
-
-.glass-input::placeholder { color: rgba(255, 255, 255, 0.35); }
-
 .glass-input:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 94, 120, 0.6);
+  border-color: rgba(255,107,157,0.4);
+  background: rgba(255,255,255,0.06);
+}
+.glass-input::placeholder { color: rgba(255,255,255,0.3); }
+
+/* ===== 渐变按钮(v3 双色) ===== */
+.btn-gradient {
+  background: linear-gradient(135deg, #FF6B9D 0%, #FF8C35 100%);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 6px 24px rgba(255,107,157,0.35), 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-gradient:active {
+  transform: scale(0.98);
+  box-shadow: 0 4px 16px rgba(255,107,157,0.25);
 }
 
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { scrollbar-width: none; }
+/* ===== 渐变文字(v3 标志性效果) ===== */
+.gradient-text {
+  background: linear-gradient(100deg, #fff 0%, #FFB8D4 55%, #FF7EB6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
+.gradient-text-sub {
+  background: linear-gradient(100deg, rgba(255,255,255,0.7) 0%, rgba(255,180,210,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-brand {
+  background: linear-gradient(120deg, #fff, #FF6B9D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== 13 个类目的 v3 双色渐变 ===== */
+.cat-meal       { background: linear-gradient(145deg, #FF6B9DDD, #FF9A6CBB); box-shadow: 0 4px 14px rgba(255,107,157,0.27); border: 1px solid rgba(255,107,157,0.27); }
+.cat-drink      { background: linear-gradient(145deg, #F59E0BDD, #FCD34DBB); box-shadow: 0 4px 14px rgba(245,158,11,0.27); border: 1px solid rgba(245,158,11,0.27); }
+.cat-photo      { background: linear-gradient(145deg, #A78BFADD, #C084FCBB); box-shadow: 0 4px 14px rgba(167,139,250,0.27); border: 1px solid rgba(167,139,250,0.27); }
+.cat-travel     { background: linear-gradient(145deg, #34D399DD, #6EE7B7BB); box-shadow: 0 4px 14px rgba(52,211,153,0.27); border: 1px solid rgba(52,211,153,0.27); }
+.cat-mahjong    { background: linear-gradient(145deg, #F87171DD, #FCA5A5BB); box-shadow: 0 4px 14px rgba(248,113,113,0.27); border: 1px solid rgba(248,113,113,0.27); }
+.cat-badminton  { background: linear-gradient(145deg, #60A5FADD, #93C5FDBB); box-shadow: 0 4px 14px rgba(96,165,250,0.27); border: 1px solid rgba(96,165,250,0.27); }
+.cat-billiards  { background: linear-gradient(145deg, #4ADE80DD, #86EFACBB); box-shadow: 0 4px 14px rgba(74,222,128,0.27); border: 1px solid rgba(74,222,128,0.27); }
+.cat-tennis     { background: linear-gradient(145deg, #A3E635DD, #D9F99DBB); box-shadow: 0 4px 14px rgba(163,230,53,0.27); border: 1px solid rgba(163,230,53,0.27); }
+.cat-basketball { background: linear-gradient(145deg, #FB923CDD, #FDBA74BB); box-shadow: 0 4px 14px rgba(251,146,60,0.27); border: 1px solid rgba(251,146,60,0.27); }
+.cat-pingpong   { background: linear-gradient(145deg, #818CF8DD, #A5B4FCBB); box-shadow: 0 4px 14px rgba(129,140,248,0.27); border: 1px solid rgba(129,140,248,0.27); }
+.cat-study      { background: linear-gradient(145deg, #6366F1DD, #818CF8BB); box-shadow: 0 4px 14px rgba(99,102,241,0.27); border: 1px solid rgba(99,102,241,0.27); }
+.cat-movie      { background: linear-gradient(145deg, #EC4899DD, #F472B6BB); box-shadow: 0 4px 14px rgba(236,72,153,0.27); border: 1px solid rgba(236,72,153,0.27); }
+.cat-game       { background: linear-gradient(145deg, #06B6D4DD, #22D3EEBB); box-shadow: 0 4px 14px rgba(6,182,212,0.27); border: 1px solid rgba(6,182,212,0.27); }
+
+/* ===== 动画 ===== */
+@keyframes pulseGlow {
+  0%,100% { opacity: 0.6; transform: scale(1); }
+  50%     { opacity: 1; transform: scale(1.08); }
+}
+@keyframes dotPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
+  50%     { box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.3s ease both; }
+.live-dot { animation: dotPulse 2s ease infinite; }
+.glow-pulse { animation: pulseGlow 4s ease infinite; }
+
+/* ===== 安全区域 ===== */
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* 新增类目渐变(追加,不覆盖) */
-.cat-teal   { background: linear-gradient(145deg, #14B8A6 0%, #2DD4BF 100%); color: #FFFFFF; }
-.cat-sky    { background: linear-gradient(145deg, #3B82F6 0%, #8B5CF6 100%); color: #FFFFFF; }
-.cat-red    { background: linear-gradient(145deg, #EF4444 0%, #F87171 100%); color: #FFFFFF; }
-.cat-green  { background: linear-gradient(145deg, #06D6A0 0%, #1DE9B6 100%); color: #003D2E; }
-.cat-forest { background: linear-gradient(145deg, #059669 0%, #10B981 100%); color: #FFFFFF; }
-.cat-lime   { background: linear-gradient(145deg, #84CC16 0%, #A3E635 100%); color: #1A2E05; }
-.cat-orange { background: linear-gradient(145deg, #FB923C 0%, #FDBA74 100%); color: #4A2500; }
-.cat-cyan   { background: linear-gradient(145deg, #06B6D4 0%, #22D3EE 100%); color: #083344; }
-.cat-beige  { background: linear-gradient(145deg, #D4A574 0%, #E8C9A0 100%); color: #4A3319; }
-.cat-gold   { background: linear-gradient(145deg, #F59E0B 0%, #FCD34D 100%); color: #4A2F00; }

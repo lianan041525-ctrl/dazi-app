@@ -19,7 +19,7 @@ function ListInner() {
       setLoading(true);
       const sb = supabaseBrowser();
       let q = sb.from('posts')
-        .select('post_id,category,title,content,city,district,created_at,profiles(nickname,avatar,gender,age)')
+        .select('post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)')
         .eq('city', city).eq('status', 1)
         .order('created_at', { ascending: false }).limit(50);
       if (category) q = q.eq('category', category);

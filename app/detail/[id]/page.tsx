@@ -8,17 +8,29 @@ import Toast, { toast } from '@/components/Toast';
 export default function DetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [post, setPost] = useState<any>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [wechatRevealed, setReveal] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [contacting, setContacting] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
+      setLoadError(null);
       const sb = supabaseBrowser();
-      const { data } = await sb.from('posts')
-        .select('*,profiles(nickname,avatar,gender,age,wechat_id,city)')
-        .eq('post_id', params.id).single();
-      setPost(data);
+      const { data, error } = await sb.from('posts')
+        .select('*,profiles(nickname,gender,age,wechat_id,city)')
+        .eq('post_id', params.id).maybeSingle();
+      
+      if (error) {
+        setLoadError(error.message);
+      } else if (!data) {
+        setLoadError('需求不存在或已下架');
+      } else {
+        setPost(data);
+      }
+      setLoading(false);
     })();
   }, [params.id]);
 
@@ -28,14 +40,14 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     if (!user) return router.push(`/login?redirect=/detail/${params.id}`);
     if (user.id === post.user_id) return toast('不能联系自己哦');
 
-    setLoading(true);
+    setContacting(true);
     const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ post_id: post.post_id }),
     });
     const json = await res.json();
-    setLoading(false);
+    setContacting(false);
     if (json.code !== 0) return toast(json.msg);
     setReveal(json.data.wechat_id);
   };
@@ -53,7 +65,29 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     toast('举报已提交');
   };
 
-  if (!post) return <div className="p-8 text-center text-white/40 text-sm">加载中...</div>;
+  // 加载中
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white/40 text-sm">加载中...</div>
+      </div>
+    );
+  }
+
+  // 加载失败
+  if (loadError || !post) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-8 text-center">
+        <div className="text-4xl mb-4">😕</div>
+        <div className="text-white/80 text-base mb-2">加载失败</div>
+        <div className="text-white/50 text-xs mb-6">{loadError || '无法获取详情'}</div>
+        <button onClick={() => router.back()}
+          className="btn-gradient px-6 h-10 rounded-full text-sm font-medium">
+          返回
+        </button>
+      </div>
+    );
+  }
 
   const cat = CATEGORY_MAP[post.category] ?? { name: '其他', icon: '📌' };
   const time = TIME_OPTIONS.find((t) => t.value === post.meet_time_type)?.label ?? '';
@@ -75,9 +109,9 @@ export default function DetailPage({ params }: { params: { id: string } }) {
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-medium overflow-hidden shrink-0"
               style={{ background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)', color: '#fff' }}>
-              {p?.avatar ? (
+              {p?.avatar_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.avatar} alt="" className="w-full h-full object-cover" />
+                <img src={p.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
                 <span>{p?.nickname?.[0] ?? '搭'}</span>
               )}
@@ -95,6 +129,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
               <div className="text-xs text-white/50 mt-1">
                 {post.city}{post.district ? ` · ${post.district}` : ''}
               </div>
+              {p?.bio && <div className="text-[11px] text-white/40 mt-1 line-clamp-1">{p.bio}</div>}
             </div>
             <span className="text-xs text-white/40 shrink-0">{timeAgo(post.created_at)}</span>
           </div>
@@ -137,10 +172,10 @@ export default function DetailPage({ params }: { params: { id: string } }) {
         style={{ background: 'rgba(15,11,30,0.9)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderTop: '0.5px solid rgba(255,255,255,0.08)' }}>
         <button
           onClick={contact}
-          disabled={loading || !!wechatRevealed}
+          disabled={contacting || !!wechatRevealed}
           className="btn-gradient w-full h-12 rounded-xl font-medium disabled:opacity-60"
         >
-          {wechatRevealed ? '已获取联系方式' : loading ? '请稍候...' : '打招呼'}
+          {wechatRevealed ? '已获取联系方式' : contacting ? '请稍候...' : '打招呼'}
         </button>
       </footer>
 

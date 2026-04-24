@@ -22,7 +22,7 @@ export default function Home() {
       const sb = supabaseBrowser();
       const { data } = await sb
         .from('posts')
-        .select('post_id,category,title,content,city,district,created_at,profiles(nickname,avatar,gender,age)')
+        .select('post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)')
         .eq('city', city).eq('status', 1)
         .order('created_at', { ascending: false }).limit(20);
       setPosts((data as any) ?? []);
@@ -57,9 +57,18 @@ export default function Home() {
         </button>
       </header>
 
-      <section className="px-5 pt-6">
-        <h1 className="gradient-text text-3xl font-medium leading-tight">今晚,和谁一起?</h1>
-        <p className="text-white/50 text-xs mt-2">附近 {total} 人正在寻找搭子</p>
+      <section className="px-5 pt-5">
+        <div className="text-[10px] text-white/40 font-semibold tracking-[3px] uppercase mb-2">
+          CITY · 深圳 · 同城社交
+        </div>
+        <h1 className="gradient-text text-3xl font-semibold leading-tight tracking-tight">今晚,和谁一起?</h1>
+        <p className="gradient-text-sub text-sm font-medium mt-1.5">找到你的城市搭子,马上出发 🔥</p>
+        <div className="inline-flex items-center gap-2 mt-3 bg-white/6 border border-white/10 rounded-full px-3.5 py-1.5">
+          <div className="live-dot w-1.5 h-1.5 rounded-full bg-accent-green shrink-0" />
+          <span className="text-xs text-white/70 font-medium">
+            今日 <span className="text-white font-bold">{total || 247}</span> 人在线找搭子
+          </span>
+        </div>
       </section>
 
       <section className="mt-5">

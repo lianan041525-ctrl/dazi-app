@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   let q = sb
     .from('posts')
     .select(
-      'post_id,category,title,content,city,district,created_at,profiles(nickname,avatar,gender,age)',
+      'post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)',
       { count: 'exact' }
     )
     .eq('status', 1)

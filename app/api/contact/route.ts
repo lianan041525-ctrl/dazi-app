@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     // 拉取发帖人信息 + 联系方式
     const { data: post, error: postErr } = await sb
       .from('posts')
-      .select('user_id,status,profiles(wechat_id)')
+      .select('user_id,status,profiles(nickname,gender,age,wechat_id,city)')
       .eq('post_id', post_id)
       .single();
 
