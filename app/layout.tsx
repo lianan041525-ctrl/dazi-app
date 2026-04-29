@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { PostHogProvider } from './providers/posthog';
 
 export const metadata: Metadata = {
   title: '附近搭子 · 今晚和谁一起',
@@ -18,9 +19,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="zh-CN">
       <body>
-        <div className="max-w-[480px] mx-auto min-h-screen relative">
-          {children}
-        </div>
+        <PostHogProvider>
+          <div className="max-w-[480px] mx-auto min-h-screen relative">
+            {children}
+          </div>
+        </PostHogProvider>
       </body>
     </html>
   );

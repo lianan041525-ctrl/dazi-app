@@ -5,6 +5,7 @@ import { supabaseBrowser } from '@/lib/supabase-browser';
 import { CATEGORIES, TIME_OPTIONS } from '@/lib/constants';
 import { useCityStore } from '@/lib/store';
 import Toast, { toast } from '@/components/Toast';
+import posthog from 'posthog-js';
 
 function PostInner() {
   const router = useRouter();
@@ -57,6 +58,7 @@ function PostInner() {
 
     setLoading(false);
     if (error) return toast(error.message);
+    posthog.capture('post_published', { category });
     toast('发布成功');
     router.replace(`/list?category=${category}`);
   };

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
+import posthog from 'posthog-js';
 import { CATEGORY_MAP, TIME_OPTIONS, timeAgo } from '@/lib/constants';
 import Toast, { toast } from '@/components/Toast';
 
