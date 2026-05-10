@@ -261,9 +261,21 @@ export default function MinePage() {
         )}
       </section>
 
+      {/* 管理员入口 - 仅管理员可见 */}
+      {profile?.user_id === '025c3bf4-1e7c-41ce-8bf8-3a956cf40498' && (
+        <button
+          onClick={() => router.push('/admin')}
+          className="mx-5 mt-3 w-[calc(100%-2.5rem)] h-10 rounded-xl text-xs text-white/40 flex items-center justify-center gap-2"
+          style={{ background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.04)' }}
+        >
+          <span>📊</span>
+          <span>数据面板</span>
+        </button>
+      )}
+
       <button
         onClick={logout}
-        className="mx-5 mt-6 w-[calc(100%-2.5rem)] h-12 rounded-xl text-sm text-white/50"
+        className="mx-5 mt-3 w-[calc(100%-2.5rem)] h-12 rounded-xl text-sm text-white/50"
         style={{ background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.06)' }}
       >
         退出登录
