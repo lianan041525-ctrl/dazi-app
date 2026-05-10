@@ -20,16 +20,18 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       setLoading(true);
       setLoadError(null);
       const sb = supabaseBrowser();
-      const { data, error } = await sb.from('posts')
-        .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count,profiles!posts_user_id_fkey(nickname,gender,age,wechat_id,city)')
+      const { data: postData, error: postError } = await sb.from('posts')
+        .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count')
         .eq('post_id', params.id).maybeSingle();
       
-      if (error) {
-        setLoadError(error.message);
-      } else if (!data) {
-        setLoadError('需求不存在或已下架');
+      if (postError || !postData) {
+        setLoadError(postError?.message || '需求不存在或已下架');
       } else {
-        setPost(data);
+        // 单独查 profiles
+        const { data: profileData } = await sb.from('profiles')
+          .select('nickname,gender,age,wechat_id,city')
+          .eq('user_id', postData.user_id).maybeSingle();
+        setPost({ ...postData, profiles: profileData });
       }
       setLoading(false);
     })();
