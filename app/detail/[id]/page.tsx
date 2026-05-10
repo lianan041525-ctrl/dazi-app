@@ -49,6 +49,12 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     });
     const json = await res.json();
     setContacting(false);
+    if (json.code === 403 && json.data?.need_vip) {
+      if (confirm('今日联系次数已用完\n开通会员享无限联系搭子\n\n是否前往开通？')) {
+        router.push('/vip');
+      }
+      return;
+    }
     if (json.code !== 0) return toast(json.msg);
     setReveal(json.data.wechat_id);
   };

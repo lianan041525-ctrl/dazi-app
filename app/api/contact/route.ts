@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase-server';
 
+const FREE_DAILY_LIMIT = 3; // 免费用户每天限制次数
+
 export async function POST(req: Request) {
   try {
     const sb = supabaseServer();
@@ -29,6 +31,49 @@ export async function POST(req: Request) {
     const wechat = (post as any).profiles?.wechat_id;
     if (!wechat)
       return NextResponse.json({ code: 404, msg: '对方未设置联系方式' });
+
+    // ── 会员 & 次数检查 ──────────────────────────────
+    const { data: myProfile } = await sb
+      .from('profiles')
+      .select('vip_expires_at, daily_contact_count, last_contact_date')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const isVip = myProfile?.vip_expires_at &&
+      new Date(myProfile.vip_expires_at) > new Date();
+
+    if (!isVip) {
+      const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+      const lastDate = myProfile?.last_contact_date;
+      const todayCount = lastDate === today
+        ? (myProfile?.daily_contact_count ?? 0)
+        : 0;
+
+      if (todayCount >= FREE_DAILY_LIMIT) {
+        return NextResponse.json({
+          code: 403,
+          msg: `今日联系次数已达上限（${FREE_DAILY_LIMIT}次），开通会员享无限联系`,
+          data: { need_vip: true },
+        });
+      }
+
+      // 先检查是否已经联系过这条帖子（不重复计数）
+      const { data: existing } = await sb
+        .from('contact_logs')
+        .select('id')
+        .eq('from_user_id', user.id)
+        .eq('post_id', post_id)
+        .maybeSingle();
+
+      // 只有新联系才计数
+      if (!existing) {
+        await sb.from('profiles').update({
+          daily_contact_count: todayCount + 1,
+          last_contact_date: today,
+        }).eq('user_id', user.id);
+      }
+    }
+    // ── 会员检查结束 ──────────────────────────────────
 
     // 写联系记录（upsert 防重复）
     await sb.from('contact_logs').upsert(

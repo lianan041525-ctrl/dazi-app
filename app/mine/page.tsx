@@ -162,6 +162,41 @@ export default function MinePage() {
         </div>
       </header>
 
+      {/* 会员状态入口 */}
+      <section className="px-5 mt-4 mb-2">
+        <button
+          onClick={() => router.push('/vip')}
+          className="w-full p-4 rounded-2xl flex items-center justify-between active:opacity-80 transition"
+          style={{
+            background: profile?.vip_expires_at && new Date(profile.vip_expires_at) > new Date()
+              ? 'linear-gradient(135deg, rgba(255,107,157,0.2), rgba(192,38,211,0.15))'
+              : 'rgba(255,255,255,0.04)',
+            border: profile?.vip_expires_at && new Date(profile.vip_expires_at) > new Date()
+              ? '1px solid rgba(255,107,157,0.3)'
+              : '0.5px solid rgba(255,255,255,0.08)',
+          }}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">👑</span>
+            <div className="text-left">
+              {profile?.vip_expires_at && new Date(profile.vip_expires_at) > new Date() ? (
+                <>
+                  <div className="text-sm font-medium text-white">会员有效中</div>
+                  <div className="text-xs text-white/50 mt-0.5">
+                    到期：{new Date(profile.vip_expires_at).toLocaleDateString('zh-CN')}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-sm font-medium text-white">开通搭子会员</div>
+                  <div className="text-xs text-white/50 mt-0.5">¥28/年 · 无限联系搭子</div>
+                </>
+              )}
+            </div>
+          </div>
+          <span className="text-white/40 text-sm">›</span>
+        </button>
+      </section>
+
       <section className="px-5 mt-2">
         <h2 className="text-base font-medium text-white mb-3">我的发布</h2>
         {posts.length === 0 ? (
