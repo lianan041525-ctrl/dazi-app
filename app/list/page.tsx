@@ -19,7 +19,7 @@ function ListInner() {
       setLoading(true);
       const sb = supabaseBrowser();
       let q = sb.from('posts')
-        .select('post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)')
+        .select('post_id,category,title,content,city,district,created_at,user_id')
         .eq('status', 1)
         .order('created_at', { ascending: false }).limit(50);
       if (category) q = q.eq('category', category);
@@ -27,7 +27,7 @@ function ListInner() {
       setPosts((data as any) ?? []);
       setLoading(false);
     })();
-  }, [city, category]);
+  }, [category]);
 
   return (
     <div className="min-h-screen pb-8">
