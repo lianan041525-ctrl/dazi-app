@@ -21,7 +21,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       setLoadError(null);
       const sb = supabaseBrowser();
       const { data, error } = await sb.from('posts')
-        .select('*,profiles(nickname,gender,age,wechat_id,city)')
+        .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count,profiles!posts_user_id_fkey(nickname,gender,age,wechat_id,city)')
         .eq('post_id', params.id).maybeSingle();
       
       if (error) {
