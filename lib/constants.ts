@@ -24,7 +24,7 @@ export const TIME_OPTIONS = [
   { value: 4, label: '本周末' },
 ];
 
-export const HOT_CITIES = ['北京', '上海', '广州', '深圳', '成都', '杭州', '武汉', '西安'];
+export const HOT_CITIES = ['北京', '上海', '广州', '深圳', '成都', '杭州', '武汉', '西安', '重庆', '南京', '苏州', '天津', '长沙', '郑州', '青岛', '厦门', '宁波', '合肥', '昆明', '沈阳', '哈尔滨', '济南', '大连', '福州', '南宁', '贵阳', '太原', '乌鲁木齐', '海口', '三亚'];
 
 export function timeAgo(iso: string) {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
