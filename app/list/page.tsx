@@ -17,13 +17,11 @@ function ListInner() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      console.log('DEBUG city:', JSON.stringify(city), 'category:', category);
       const sb = supabaseBrowser();
       let q = sb.from('posts')
         .select('post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)')
         .eq('status', 1)
         .order('created_at', { ascending: false }).limit(50);
-      if (city) q = q.eq('city', city);
       if (category) q = q.eq('category', category);
       const { data } = await q;
       setPosts((data as any) ?? []);
