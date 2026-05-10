@@ -15,38 +15,8 @@ function LoginInner() {
   const [error, setError] = useState('');
   const [agreed, setAgreed] = useState(true);
 
-  // 判断输入类型
   const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   const isPhone = (v: string) => /^1[3-9]\d{9}$/.test(v);
-
-  const getEmailByAccount = async (acc: string): Promise<string | null> => {
-    const sb = supabaseBrowser();
-    if (isEmail(acc)) return acc;
-    if (isPhone(acc)) {
-      const { data } = await sb
-        .from('profiles')
-        .select('user_id')
-        .eq('phone', acc)
-        .maybeSingle();
-      if (!data) return null;
-      // 通过 user_id 查 auth email
-      const { data: userData } = await sb
-        .from('profiles')
-        .select('user_id')
-        .eq('phone', acc)
-        .maybeSingle();
-      // 用手机号拼一个虚拟邮箱
-      return `${acc}@phone.citydz.cc`;
-    }
-    // 用户名查询
-    const { data } = await sb
-      .from('profiles')
-      .select('username')
-      .eq('username', acc)
-      .maybeSingle();
-    if (!data) return null;
-    return `${acc}@username.citydz.cc`;
-  };
 
   const handleSubmit = async () => {
     if (!account.trim() || !password.trim()) {
@@ -66,7 +36,6 @@ function LoginInner() {
     setError('');
     const sb = supabaseBrowser();
 
-    // 确定邮箱
     let email = '';
     if (isEmail(account)) {
       email = account;
@@ -76,16 +45,13 @@ function LoginInner() {
       email = `${account}@username.citydz.cc`;
     }
 
-    // 先尝试登录
     const { error: signInError } = await sb.auth.signInWithPassword({ email, password });
 
     if (!signInError) {
-      // 登录成功
       router.replace(redirect);
       return;
     }
 
-    // 登录失败 → 尝试注册
     if (signInError.message.includes('Invalid login credentials')) {
       const { data: signUpData, error: signUpError } = await sb.auth.signUp({
         email,
@@ -101,7 +67,6 @@ function LoginInner() {
         return;
       }
 
-      // 写入 profiles
       if (signUpData.user) {
         const profileData: any = {
           user_id: signUpData.user.id,
@@ -109,7 +74,6 @@ function LoginInner() {
         };
         if (isPhone(account)) profileData.phone = account;
         else if (!isEmail(account)) profileData.username = account;
-
         await sb.from('profiles').upsert(profileData);
       }
 
@@ -122,22 +86,33 @@ function LoginInner() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6"
-      style={{ background: 'linear-gradient(180deg, #f0faf8 0%, #ffffff 100%)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
+      style={{ background: '#0A0A18' }}>
 
-      {/* Logo / 标题 */}
+      {/* 背景光晕 */}
+      <div className="absolute inset-0 -z-10" style={{
+        background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,107,157,0.2) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(192,38,211,0.15) 0%, transparent 60%)',
+      }} />
+
+      {/* Logo */}
       <div className="mb-10 text-center">
-        <div className="text-3xl mb-2">🌸</div>
-        <h1 className="text-2xl font-bold text-gray-800">City搭子</h1>
-        <p className="text-gray-500 text-sm mt-1">同城找搭子，马上约起来</p>
+        <div className="text-4xl mb-3">🌸</div>
+        <h1 className="text-2xl font-bold text-white">City搭子</h1>
+        <p className="text-white/50 text-sm mt-1">同城找搭子，马上约起来</p>
       </div>
 
       {/* 卡片 */}
-      <div className="w-full max-w-sm bg-white rounded-3xl shadow-lg p-8">
-        <h2 className="text-lg font-semibold text-gray-800 text-center mb-1">
+      <div className="w-full max-w-sm rounded-3xl p-8"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '0.5px solid rgba(255,255,255,0.1)',
+          backdropFilter: 'blur(20px)',
+        }}>
+
+        <h2 className="text-lg font-semibold text-white text-center mb-1">
           登录 / 注册账户
         </h2>
-        <p className="text-gray-400 text-xs text-center mb-6">
+        <p className="text-white/40 text-xs text-center mb-6">
           未注册用户将会自动注册
         </p>
 
@@ -148,7 +123,11 @@ function LoginInner() {
             value={account}
             onChange={(e) => setAccount(e.target.value)}
             placeholder="手机号 / 邮箱 / 用户名"
-            className="w-full h-12 px-4 rounded-2xl border border-gray-200 bg-gray-50 text-gray-800 text-sm outline-none focus:border-emerald-400 transition"
+            className="w-full h-12 px-4 rounded-2xl text-white text-sm outline-none transition"
+            style={{
+              background: 'rgba(255,255,255,0.06)',
+              border: '0.5px solid rgba(255,255,255,0.12)',
+            }}
           />
         </div>
 
@@ -159,14 +138,19 @@ function LoginInner() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="密码（至少6位）"
-            className="w-full h-12 px-4 rounded-2xl border border-gray-200 bg-gray-50 text-gray-800 text-sm outline-none focus:border-emerald-400 transition"
+            className="w-full h-12 px-4 rounded-2xl text-white text-sm outline-none transition"
+            style={{
+              background: 'rgba(255,255,255,0.06)',
+              border: '0.5px solid rgba(255,255,255,0.12)',
+            }}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
           />
         </div>
 
         {/* 错误提示 */}
         {error && (
-          <div className="mb-4 px-3 py-2 bg-red-50 rounded-xl text-red-500 text-xs text-center">
+          <div className="mb-4 px-3 py-2 rounded-xl text-xs text-center"
+            style={{ background: 'rgba(255,107,157,0.15)', color: '#FF6B9D' }}>
             {error}
           </div>
         )}
@@ -175,8 +159,13 @@ function LoginInner() {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full h-12 rounded-2xl text-white font-semibold text-sm transition disabled:opacity-60"
-          style={{ background: loading ? '#9de0d0' : 'linear-gradient(135deg, #2dd4a7, #10b981)' }}
+          className="w-full h-12 rounded-2xl text-white font-semibold text-sm transition disabled:opacity-50"
+          style={{
+            background: loading
+              ? 'rgba(255,107,157,0.4)'
+              : 'linear-gradient(135deg, #FF6B9D, #C026D3)',
+            boxShadow: loading ? 'none' : '0 8px 24px rgba(255,107,157,0.35)',
+          }}
         >
           {loading ? '处理中...' : '登录 / 注册'}
         </button>
@@ -185,18 +174,20 @@ function LoginInner() {
         <div className="flex items-center gap-2 mt-5 justify-center">
           <button
             onClick={() => setAgreed(!agreed)}
-            className="w-5 h-5 rounded-full border-2 flex items-center justify-center transition shrink-0"
+            className="w-5 h-5 rounded-full border flex items-center justify-center transition shrink-0"
             style={{
-              borderColor: agreed ? '#10b981' : '#d1d5db',
-              background: agreed ? '#10b981' : 'white',
+              borderColor: agreed ? '#FF6B9D' : 'rgba(255,255,255,0.3)',
+              background: agreed
+                ? 'linear-gradient(135deg, #FF6B9D, #C026D3)'
+                : 'transparent',
             }}
           >
             {agreed && <span className="text-white text-[10px]">✓</span>}
           </button>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-white/50">
             已阅读并同意
-            <span className="text-emerald-500 mx-1">用户协议</span>
-            <span className="text-emerald-500">隐私政策</span>
+            <span className="mx-1" style={{ color: '#FF6B9D' }}>用户协议</span>
+            <span style={{ color: '#FF6B9D' }}>隐私政策</span>
           </span>
         </div>
       </div>
@@ -206,7 +197,12 @@ function LoginInner() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-400">加载中...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center"
+        style={{ background: '#0A0A18' }}>
+        <div className="text-white/40 text-sm">加载中...</div>
+      </div>
+    }>
       <LoginInner />
     </Suspense>
   );
