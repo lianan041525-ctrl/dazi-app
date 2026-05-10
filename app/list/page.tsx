@@ -17,6 +17,7 @@ function ListInner() {
   useEffect(() => {
     (async () => {
       setLoading(true);
+      console.log('DEBUG city:', JSON.stringify(city), 'category:', category);
       const sb = supabaseBrowser();
       let q = sb.from('posts')
         .select('post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)')
