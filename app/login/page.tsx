@@ -14,6 +14,19 @@ function LoginInner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [agreed, setAgreed] = useState(true);
+  const [showReset, setShowReset] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSent, setResetSent] = useState(false);
+
+  const handleReset = async () => {
+    if (!resetEmail.trim()) { setError('请输入邮箱'); return; }
+    const sb = supabaseBrowser();
+    const { error } = await sb.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: window.location.origin + '/reset-password',
+    });
+    if (error) { setError('发送失败：' + error.message); return; }
+    setResetSent(true);
+  };
 
   const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   const isPhone = (v: string) => /^1[3-9]\d{9}$/.test(v);
@@ -169,6 +182,47 @@ function LoginInner() {
         >
           {loading ? '处理中...' : '登录 / 注册'}
         </button>
+
+        {/* 忘记密码 */}
+        <button
+          onClick={() => setShowReset(!showReset)}
+          className="w-full text-center text-xs mt-2 mb-1"
+          style={{ color: 'rgba(255,107,157,0.7)' }}
+        >
+          忘记密码？
+        </button>
+
+        {showReset && (
+          <div className="mt-2 p-4 rounded-2xl space-y-3"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.1)' }}>
+            {resetSent ? (
+              <div className="text-center">
+                <div className="text-2xl mb-2">📬</div>
+                <div className="text-white/80 text-sm">重置邮件已发送</div>
+                <div className="text-white/40 text-xs mt-1">请查收邮箱，点击链接重置密码</div>
+              </div>
+            ) : (
+              <>
+                <div className="text-white/60 text-xs">输入注册邮箱，我们会发送重置链接</div>
+                <input
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="注册邮箱"
+                  className="w-full h-10 px-4 rounded-xl text-white text-sm outline-none"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '0.5px solid rgba(255,255,255,0.12)' }}
+                />
+                <button
+                  onClick={handleReset}
+                  className="w-full h-10 rounded-xl text-white text-sm font-medium"
+                  style={{ background: 'linear-gradient(135deg, #FF6B9D, #C026D3)' }}
+                >
+                  发送重置邮件
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
         {/* 协议 */}
         <div className="flex items-center gap-2 mt-5 justify-center">
