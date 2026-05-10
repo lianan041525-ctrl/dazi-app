@@ -14,10 +14,10 @@ export async function POST(req: Request) {
     const { post_id } = await req.json();
     if (!post_id) return NextResponse.json({ code: 400, msg: '参数错误' });
 
-    // 拉取发帖人信息 + 联系方式
+    // 拉取帖子信息
     const { data: post, error: postErr } = await sb
       .from('posts')
-      .select('user_id,status,profiles(nickname,gender,age,wechat_id,city)')
+      .select('user_id,status')
       .eq('post_id', post_id)
       .single();
 
@@ -28,7 +28,14 @@ export async function POST(req: Request) {
     if (post.user_id === user.id)
       return NextResponse.json({ code: 400, msg: '不能联系自己' });
 
-    const wechat = (post as any).profiles?.wechat_id;
+    // 单独查发帖人 profile
+    const { data: posterProfile } = await sb
+      .from('profiles')
+      .select('wechat_id')
+      .eq('user_id', post.user_id)
+      .maybeSingle();
+
+    const wechat = posterProfile?.wechat_id;
     if (!wechat)
       return NextResponse.json({ code: 404, msg: '对方未设置联系方式' });
 
