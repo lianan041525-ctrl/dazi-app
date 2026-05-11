@@ -1,17 +1,33 @@
 export const CATEGORIES = [
-  { key: 'meal', name: '饭搭子', icon: '🍲', cls: 'cat-meal' },
-  { key: 'drink', name: '酒搭子', icon: '🍻', cls: 'cat-drink' },
-  { key: 'photo', name: '约拍搭子', icon: '📸', cls: 'cat-photo' },
-  { key: 'travel', name: '出游搭子', icon: '✈️', cls: 'cat-travel' },
-  { key: 'mahjong', name: '麻将搭子', icon: '🀄', cls: 'cat-mahjong' },
-  { key: 'badminton', name: '羽毛球搭子', icon: '🏸', cls: 'cat-badminton' },
-  { key: 'billiards', name: '桌球搭子', icon: '🎱', cls: 'cat-billiards' },
-  { key: 'tennis', name: '网球搭子', icon: '🎾', cls: 'cat-tennis' },
-  { key: 'basketball', name: '篮球搭子', icon: '🏀', cls: 'cat-basketball' },
-  { key: 'pingpong', name: '乒乓球搭子', icon: '🏓', cls: 'cat-pingpong' },
-  { key: 'study', name: '学习搭子', icon: '📚', cls: 'cat-study' },
+  // 生活类
+  { key: 'meal', name: '饭搭子', icon: '🍜', cls: 'cat-meal' },
+  { key: 'coffee', name: '咖啡搭子', icon: '☕', cls: 'cat-coffee' },
+  { key: 'shopping', name: '逛街搭子', icon: '🛍️', cls: 'cat-shopping' },
+  { key: 'exhibition', name: '看展搭子', icon: '🎨', cls: 'cat-exhibition' },
+  // 娱乐类
   { key: 'movie', name: '电影搭子', icon: '🎬', cls: 'cat-movie' },
+  { key: 'ktv', name: 'KTV搭子', icon: '🎤', cls: 'cat-ktv' },
+  { key: 'escape', name: '密室搭子', icon: '🔐', cls: 'cat-escape' },
+  { key: 'drink', name: '酒吧搭子', icon: '🍻', cls: 'cat-drink' },
   { key: 'game', name: '游戏搭子', icon: '🎮', cls: 'cat-game' },
+  // 运动类
+  { key: 'badminton', name: '羽毛球搭子', icon: '🏸', cls: 'cat-badminton' },
+  { key: 'basketball', name: '篮球搭子', icon: '🏀', cls: 'cat-basketball' },
+  { key: 'running', name: '跑步搭子', icon: '🏃', cls: 'cat-running' },
+  { key: 'fitness', name: '健身搭子', icon: '💪', cls: 'cat-fitness' },
+  { key: 'cycling', name: '骑行搭子', icon: '🚴', cls: 'cat-cycling' },
+  // 出行类
+  { key: 'travel', name: '旅游搭子', icon: '✈️', cls: 'cat-travel' },
+  { key: 'roadtrip', name: '自驾搭子', icon: '🚗', cls: 'cat-roadtrip' },
+  { key: 'camping', name: '露营搭子', icon: '⛺', cls: 'cat-camping' },
+  // 学习类
+  { key: 'study', name: '自习搭子', icon: '📚', cls: 'cat-study' },
+  { key: 'language', name: '语言学习', icon: '🗣️', cls: 'cat-language' },
+  { key: 'exam', name: '考研搭子', icon: '📝', cls: 'cat-exam' },
+  // 其他
+  { key: 'pet', name: '宠物搭子', icon: '🐾', cls: 'cat-pet' },
+  { key: 'photo', name: '摄影搭子', icon: '📸', cls: 'cat-photo' },
+  { key: 'date', name: '相亲搭子', icon: '💝', cls: 'cat-date' },
 ] as const;
 
 export const CATEGORY_MAP: Record<string, { name: string; icon: string }> =
