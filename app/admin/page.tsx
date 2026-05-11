@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
+import NavConfigPanel from '@/components/NavConfigPanel';
 
 const ADMIN_UID = '025c3bf4-1e7c-41ce-8bf8-3a956cf40498';
 
@@ -252,6 +253,9 @@ export default function AdminDashboard() {
             ))}
           </div>
         </section>
+
+        {/* 导航配置 */}
+        <NavConfigPanel />
 
         {/* 底部时间戳 */}
         <div className="text-center text-white/20 text-xs pb-4">
