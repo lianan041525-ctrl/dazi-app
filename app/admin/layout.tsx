@@ -8,6 +8,8 @@ const ADMIN_UID = '025c3bf4-1e7c-41ce-8bf8-3a956cf40498';
 const MENU = [
   { label: '数据面板', href: '/admin', icon: '📊' },
   { label: '用户管理', href: '/admin/users', icon: '👥' },
+  { label: '帖子管理', href: '/admin/posts', icon: '📝' },
+  { label: '广告位管理', href: '/admin/banners', icon: '📢' },
   { label: '导航配置', href: '/admin/nav', icon: '🔧' },
 ];
 
