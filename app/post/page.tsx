@@ -126,7 +126,7 @@ function PostInner() {
         <div>
           <label className="text-sm text-white/60">搭子类型</label>
           <div className="grid grid-cols-3 gap-2 mt-2.5">
-            {CATEGORIES.map((c) => (
+            {(showAllCats ? CATEGORIES : [...CATEGORIES].slice(0, 6)).map((c) => (
               <button
                 key={c.key}
                 onClick={() => setCategory(c.key)}
@@ -145,6 +145,11 @@ function PostInner() {
                 <div className="mt-1">{c.name}</div>
               </button>
             ))}
+            <button onClick={() => setShowAllCats(v => !v)}
+              className="col-span-3 py-2.5 rounded-xl text-xs text-white/40 transition-all"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.06)' }}>
+              {showAllCats ? '▲ 收起' : `▼ 展开全部 ${CATEGORIES.length} 个分类`}
+            </button>
           </div>
         </div>
 
