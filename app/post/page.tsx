@@ -21,6 +21,7 @@ function PostInner() {
   const [timeType, setTimeType] = useState(1);
   const [wechat, setWechat] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showAllCats, setShowAllCats] = useState(false);
   const [ready, setReady] = useState(false);
   const [notLoggedIn, setNotLoggedIn] = useState(false);
 
