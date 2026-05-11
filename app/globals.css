@@ -96,6 +96,20 @@ body {
 .cat-study      { background: linear-gradient(145deg, #6366F1DD, #818CF8BB); box-shadow: 0 4px 14px rgba(99,102,241,0.27); border: 1px solid rgba(99,102,241,0.27); }
 .cat-movie      { background: linear-gradient(145deg, #EC4899DD, #F472B6BB); box-shadow: 0 4px 14px rgba(236,72,153,0.27); border: 1px solid rgba(236,72,153,0.27); }
 .cat-game       { background: linear-gradient(145deg, #06B6D4DD, #22D3EEBB); box-shadow: 0 4px 14px rgba(6,182,212,0.27); border: 1px solid rgba(6,182,212,0.27); }
+.cat-coffee     { background: linear-gradient(145deg, #92400EDD, #B45309BB); box-shadow: 0 4px 14px rgba(146,64,14,0.27); border: 1px solid rgba(146,64,14,0.27); }
+.cat-shopping   { background: linear-gradient(145deg, #EC4899DD, #F9A8D4BB); box-shadow: 0 4px 14px rgba(236,72,153,0.27); border: 1px solid rgba(236,72,153,0.27); }
+.cat-exhibition { background: linear-gradient(145deg, #7C3AEDDD, #A78BFABB); box-shadow: 0 4px 14px rgba(124,58,237,0.27); border: 1px solid rgba(124,58,237,0.27); }
+.cat-ktv        { background: linear-gradient(145deg, #DB2777DD, #F472B6BB); box-shadow: 0 4px 14px rgba(219,39,119,0.27); border: 1px solid rgba(219,39,119,0.27); }
+.cat-escape     { background: linear-gradient(145deg, #1F2937DD, #374151BB); box-shadow: 0 4px 14px rgba(31,41,55,0.27); border: 1px solid rgba(75,85,99,0.4); }
+.cat-running    { background: linear-gradient(145deg, #059669DD, #34D399BB); box-shadow: 0 4px 14px rgba(5,150,105,0.27); border: 1px solid rgba(5,150,105,0.27); }
+.cat-fitness    { background: linear-gradient(145deg, #DC2626DD, #F87171BB); box-shadow: 0 4px 14px rgba(220,38,38,0.27); border: 1px solid rgba(220,38,38,0.27); }
+.cat-cycling    { background: linear-gradient(145deg, #0284C7DD, #38BDF8BB); box-shadow: 0 4px 14px rgba(2,132,199,0.27); border: 1px solid rgba(2,132,199,0.27); }
+.cat-roadtrip   { background: linear-gradient(145deg, #D97706DD, #FCD34DBB); box-shadow: 0 4px 14px rgba(217,119,6,0.27); border: 1px solid rgba(217,119,6,0.27); }
+.cat-camping    { background: linear-gradient(145deg, #15803DDD, #4ADE80BB); box-shadow: 0 4px 14px rgba(21,128,61,0.27); border: 1px solid rgba(21,128,61,0.27); }
+.cat-language   { background: linear-gradient(145deg, #0E7490DD, #22D3EEBB); box-shadow: 0 4px 14px rgba(14,116,144,0.27); border: 1px solid rgba(14,116,144,0.27); }
+.cat-exam       { background: linear-gradient(145deg, #4338CADD, #818CF8BB); box-shadow: 0 4px 14px rgba(67,56,202,0.27); border: 1px solid rgba(67,56,202,0.27); }
+.cat-pet        { background: linear-gradient(145deg, #B45309DD, #FCD34DBB); box-shadow: 0 4px 14px rgba(180,83,9,0.27); border: 1px solid rgba(180,83,9,0.27); }
+.cat-date       { background: linear-gradient(145deg, #BE185DDD, #F9A8D4BB); box-shadow: 0 4px 14px rgba(190,24,93,0.27); border: 1px solid rgba(190,24,93,0.27); }
 
 /* ===== 动画 ===== */
 @keyframes pulseGlow {
