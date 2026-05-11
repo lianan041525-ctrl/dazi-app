@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
 import { CATEGORIES, TIME_OPTIONS } from '@/lib/constants';
 import { useCityStore } from '@/lib/store';
+import CitySheet from '@/components/CitySheet';
 import Toast, { toast } from '@/components/Toast';
 import posthog from 'posthog-js';
 
@@ -11,6 +12,7 @@ function PostInner() {
   const router = useRouter();
   const params = useSearchParams();
   const { city } = useCityStore();
+  const [citySheetOpen, setCitySheetOpen] = useState(false);
 
   const [category, setCategory] = useState(params.get('category') || 'meal');
   const [title, setTitle] = useState('');
@@ -173,9 +175,10 @@ function PostInner() {
         <div className="flex gap-3">
           <div className="flex-1">
             <label className="text-sm text-white/60">城市</label>
-            <div className="glass-input mt-2.5 h-12 px-4 rounded-xl flex items-center text-sm text-white/70">
-              📍 {city}
-            </div>
+            <button onClick={() => setCitySheetOpen(true)}
+              className="glass-input mt-2.5 h-12 px-4 rounded-xl flex items-center text-sm text-white/70 w-full text-left">
+              📍 {city} <span className="ml-auto text-white/30 text-xs">切换</span>
+            </button>
           </div>
           <div className="flex-1">
             <label className="text-sm text-white/60">区域</label>
@@ -234,6 +237,7 @@ function PostInner() {
       </div>
 
       <Toast />
+      <CitySheet open={citySheetOpen} onClose={() => setCitySheetOpen(false)} />
     </div>
   );
 }
