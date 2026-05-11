@@ -23,7 +23,7 @@ export default function Home() {
       const { data } = await sb
         .from('posts')
         .select('post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)')
-        .eq('city', city).eq('status', 1)
+        .eq('status', 1)
         .order('created_at', { ascending: false }).limit(20);
       setPosts((data as any) ?? []);
 
@@ -31,7 +31,7 @@ export default function Home() {
       const { data: allCats } = await sb
         .from('posts')
         .select('category')
-        .eq('city', city).eq('status', 1);
+        .eq('status', 1);
       const counts: Record<string, number> = {};
       (allCats ?? []).forEach((p: any) => {
         counts[p.category] = (counts[p.category] || 0) + 1;
