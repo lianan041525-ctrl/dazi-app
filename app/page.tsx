@@ -20,12 +20,23 @@ export default function Home() {
     (async () => {
       setLoading(true);
       const sb = supabaseBrowser();
-      const { data } = await sb
+      const { data: postData } = await sb
         .from('posts')
-        .select('post_id,category,title,content,city,district,created_at,profiles(nickname,gender,age,wechat_id,city)')
+        .select('post_id,category,title,content,city,district,created_at,user_id')
         .eq('status', 1)
         .order('created_at', { ascending: false }).limit(20);
-      setPosts((data as any) ?? []);
+
+      const rawPosts = postData ?? [];
+      const userIds = [...new Set(rawPosts.map((p: any) => p.user_id))];
+      let profileMap: Record<string, any> = {};
+      if (userIds.length > 0) {
+        const { data: profiles } = await sb.from('profiles')
+          .select('user_id,nickname,gender,age,wechat_id,city')
+          .in('user_id', userIds);
+        (profiles ?? []).forEach((p: any) => { profileMap[p.user_id] = p; });
+      }
+      const merged = rawPosts.map((p: any) => ({ ...p, profiles: profileMap[p.user_id] || null }));
+      setPosts(merged as any);
 
       // 统计每个类目的帖子数
       const { data: allCats } = await sb
