@@ -73,7 +73,7 @@ export default function VipPage() {
           }}>
           <div className="text-sm text-white/50">当前状态</div>
           <div className="text-base font-medium text-white/70 mt-1">普通用户</div>
-          <div className="text-xs text-white/40 mt-1">每天可联系 3 位搭子</div>
+          <div className="text-xs text-white/40 mt-1">开通会员解锁无限联系</div>
         </div>
       )}
 
@@ -91,7 +91,7 @@ export default function VipPage() {
             }}>👑 会员</div>
           </div>
           {[
-            { label: '每日联系次数', free: '3次', vip: '无限次' },
+            { label: '联系搭子', free: '❌ 不可联系', vip: '✅ 无限联系' },
             { label: '帖子优先展示', free: '❌', vip: '✅' },
             { label: '会员专属标识', free: '❌', vip: '👑' },
             { label: '查看谁看过我', free: '❌', vip: '✅（即将上线）' },
@@ -122,10 +122,10 @@ export default function VipPage() {
             推荐
           </div>
           <div className="flex items-end gap-1.5">
-            <span className="text-3xl font-bold text-white">¥28</span>
+            <span className="text-3xl font-bold text-white">¥30</span>
             <span className="text-white/50 text-sm mb-1">/ 年</span>
           </div>
-          <div className="text-white/50 text-xs mt-1">约 ¥2.3 / 月 · 无限联系搭子</div>
+          <div className="text-white/50 text-xs mt-1">约 ¥2.5 / 月 · 无限联系搭子</div>
           <div className="flex gap-2 mt-3 flex-wrap">
             {['无限联系', '优先展示', '会员标识', '专属客服'].map((tag) => (
               <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full"
@@ -145,7 +145,7 @@ export default function VipPage() {
               background: 'linear-gradient(135deg, #FF6B9D, #C026D3)',
               boxShadow: '0 8px 24px rgba(255,107,157,0.4)',
             }}>
-            立即开通 · ¥28/年
+            立即开通 · ¥30/年
           </button>
           <p className="text-center text-white/30 text-xs mt-3">
             支付功能即将开放 · 敬请期待 🌸
