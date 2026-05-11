@@ -59,7 +59,7 @@ export default function Home() {
 
       <section className="px-5 pt-5">
         <div className="text-[10px] text-white/40 font-semibold tracking-[3px] uppercase mb-2">
-          CITY · 深圳 · 同城社交
+          CITY · {city} · 同城社交
         </div>
         <h1 className="gradient-text text-3xl font-semibold leading-tight tracking-tight">今晚,和谁一起?</h1>
         <p className="gradient-text-sub text-sm font-medium mt-1.5">找到你的城市搭子,马上出发 🔥</p>
