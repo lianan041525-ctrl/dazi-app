@@ -188,7 +188,7 @@ export default function MinePage() {
               ) : (
                 <>
                   <div className="text-sm font-medium text-white">开通搭子会员</div>
-                  <div className="text-xs text-white/50 mt-0.5">¥28/年 · 无限联系搭子</div>
+                  <div className="text-xs text-white/50 mt-0.5">¥30/年 · 无限联系搭子</div>
                 </>
               )}
             </div>
