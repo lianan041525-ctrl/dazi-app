@@ -21,7 +21,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       setLoadError(null);
       const sb = supabaseBrowser();
       const { data: postData, error: postError } = await sb.from('posts')
-        .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count')
+        .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count,images')
         .eq('post_id', params.id).maybeSingle();
       
       if (postError || !postData) {
@@ -156,6 +156,20 @@ export default function DetailPage({ params }: { params: { id: string } }) {
             )}
           </div>
           <h2 className="text-lg font-semibold text-white mt-3">{post.title}</h2>
+          {post.images && post.images.length > 0 && (
+            <div className="mt-3 flex gap-2 flex-wrap">
+              {post.images.map((url: string, i: number) => (
+                <img
+                  key={i}
+                  src={url}
+                  alt=""
+                  className="rounded-xl object-cover"
+                  style={{ width: post.images.length === 1 ? '100%' : 'calc(50% - 4px)', maxHeight: '240px' }}
+                  onClick={() => window.open(url, '_blank')}
+                />
+              ))}
+            </div>
+          )}
           <p className="text-sm text-white/75 leading-relaxed mt-2 whitespace-pre-wrap">{post.content}</p>
         </div>
 
