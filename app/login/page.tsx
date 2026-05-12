@@ -53,9 +53,9 @@ function LoginInner() {
     if (isEmail(account)) {
       email = account;
     } else if (isPhone(account)) {
-      email = `${account}@phone.citydz.cc`;
+      email = `${account}@phone.xinyu.cc`;
     } else {
-      email = `${account}@username.citydz.cc`;
+      email = `${account}@username.xinyu.cc`;
     }
 
     const { error: signInError } = await sb.auth.signInWithPassword({ email, password });
@@ -110,7 +110,7 @@ function LoginInner() {
       {/* Logo */}
       <div className="mb-10 text-center">
         <div className="text-4xl mb-3">🌸</div>
-        <h1 className="text-2xl font-bold text-white">City搭子</h1>
+        <h1 className="text-2xl font-bold text-white">心遇</h1>
         <p className="text-white/50 text-sm mt-1">同城找搭子，马上约起来</p>
       </div>
 

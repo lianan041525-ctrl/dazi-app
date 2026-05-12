@@ -3,13 +3,13 @@ import './globals.css';
 import { PostHogProvider } from './providers/posthog';
 
 export const metadata: Metadata = {
-  title: 'City搭子 · 同城找搭子',
+  title: '心遇 · 同城找搭子',
   description: '同城找搭子，马上约起来',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'City搭子',
+    title: '心遇',
   },
   icons: {
     apple: '/icon-192.png',
