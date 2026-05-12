@@ -29,7 +29,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       } else {
         // 单独查 profiles
         const { data: profileData } = await sb.from('profiles')
-          .select('nickname,gender,age,wechat_id,city')
+          .select('nickname,gender,age,wechat_id,city,avatar_url')
           .eq('user_id', postData.user_id).maybeSingle();
         setPost({ ...postData, profiles: profileData });
       }
