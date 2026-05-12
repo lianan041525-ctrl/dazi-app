@@ -133,7 +133,7 @@ export default function Home() {
                     style={{ background: 'linear-gradient(135deg, rgba(255,94,120,0.15), rgba(108,92,231,0.15))', borderColor: 'rgba(255,94,120,0.3)' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-white font-semibold text-sm">🔥 限时福利 · 超级会员首月 1 折</div>
+                        <div className="text-white font-semibold text-sm">🎁 限时特惠 · 年费会员仅需 1 折</div>
                         <div className="text-white/50 text-xs mt-1">解锁无限联系 · 查看所有访客 · 专属 AI 推荐</div>
                       </div>
                       <span className="text-[10px] px-1.5 py-0.5 rounded text-white/40 border border-white/20 ml-2 shrink-0">广告</span>
