@@ -16,6 +16,8 @@ export default function EditProfilePage() {
   const [city, setCity] = useState('深圳');
   const [bio, setBio] = useState('');
   const [wechat, setWechat] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -31,10 +33,30 @@ export default function EditProfilePage() {
         setCity(data.city || '深圳');
         setBio(data.bio || '');
         setWechat(data.wechat_id || '');
+        setAvatar(data.avatar_url || '');
       }
       setReady(true);
     })();
   }, [router]);
+
+  const uploadAvatar = async (file: File) => {
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { toast('图片不超过 2MB'); return; }
+    setUploading(true);
+    const sb = supabaseBrowser();
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { setUploading(false); return; }
+    const ext = file.name.split('.').pop();
+    const path = `${user.id}.${ext}`;
+    const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+    if (error) { toast('上传失败'); setUploading(false); return; }
+    const { data } = sb.storage.from('avatars').getPublicUrl(path);
+    const url = data.publicUrl + '?t=' + Date.now();
+    setAvatar(url);
+    await sb.from('profiles').update({ avatar_url: url }).eq('user_id', user.id);
+    toast('头像已更新');
+    setUploading(false);
+  };
 
   const save = async () => {
     if (!nickname.trim()) return toast('请填写昵称');
@@ -54,6 +76,7 @@ export default function EditProfilePage() {
       city,
       bio: bio.trim(),
       wechat_id: wechat.trim(),
+      avatar_url: avatar || null,
     }).eq('user_id', user.id);
 
     setSaving(false);
@@ -75,13 +98,21 @@ export default function EditProfilePage() {
         <div className="w-8" />
       </header>
 
-      {/* 头像预览 */}
+      {/* 头像上传 */}
       <section className="flex flex-col items-center pt-8 pb-4">
-        <div className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-medium overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)', color: '#fff', boxShadow: '0 8px 24px rgba(255,94,120,0.3)' }}>
-          {firstChar}
-        </div>
-        <p className="text-[11px] text-white/40 mt-3">头像由昵称首字生成</p>
+        <label className="cursor-pointer relative group">
+          <div className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-medium overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #FF5E78, #6C5CE7)', color: '#fff', boxShadow: '0 8px 24px rgba(255,94,120,0.3)' }}>
+            {avatar ? <img src={avatar} alt="头像" className="w-full h-full object-cover" /> : firstChar}
+          </div>
+          <div className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <span className="text-white text-xs">{uploading ? '上传中...' : '换头像'}</span>
+          </div>
+          <input type="file" accept="image/*" className="hidden"
+            onChange={e => { const f = e.target.files?.[0]; if (f) uploadAvatar(f); }} />
+        </label>
+        <p className="text-[11px] text-white/40 mt-3">{uploading ? '上传中...' : '点击更换头像'}</p>
       </section>
 
       {/* 字段表单 */}
