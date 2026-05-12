@@ -35,7 +35,7 @@ export default function PostCard({ post }: { post: PostCardData }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={p.avatar_url || p.avatar || ''} alt="" className="w-full h-full object-cover" />
           ) : (
-            <span>{p?.nickname?.[0] ?? '搭'}</span>
+            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.user_id}&backgroundColor=b6e3f4,ffdfbf,ffd5dc,c0aede`} alt="" className="w-full h-full object-cover" />
           )}
         </div>
         <div className="flex-1 min-w-0">
