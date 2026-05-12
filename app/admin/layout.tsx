@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="hidden md:flex flex-col w-52 shrink-0 sticky top-0 h-screen"
         style={{ background: 'rgba(255,255,255,0.03)', borderRight: '0.5px solid rgba(255,255,255,0.08)' }}>
         <div className="px-5 py-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-          <div className="text-white font-bold text-base">搭子后台</div>
+          <div className="text-white font-bold text-base">心遇后台</div>
           <div className="text-white/30 text-xs mt-0.5">管理控制台</div>
         </div>
         <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             style={{ background: '#0F0F20', borderRight: '0.5px solid rgba(255,255,255,0.1)' }}
             onClick={e => e.stopPropagation()}>
             <div className="px-5 py-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-              <div className="text-white font-bold">搭子后台</div>
+              <div className="text-white font-bold">心遇后台</div>
             </div>
             <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
               {MENU.map(item => (
