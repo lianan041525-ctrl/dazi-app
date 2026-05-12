@@ -31,7 +31,7 @@ export default function Home() {
       let profileMap: Record<string, any> = {};
       if (userIds.length > 0) {
         const { data: profiles } = await sb.from('profiles')
-          .select('user_id,nickname,gender,age,wechat_id,city')
+          .select('user_id,nickname,gender,age,wechat_id,city,avatar_url')
           .in('user_id', userIds);
         (profiles ?? []).forEach((p: any) => { profileMap[p.user_id] = p; });
       }

@@ -13,6 +13,7 @@ export interface PostCardData {
   profiles?: {
     nickname: string;
     avatar?: string | null;
+    avatar_url?: string | null;
     gender?: number | null;
     age?: number | null;
   } | null;
@@ -30,9 +31,9 @@ export default function PostCard({ post }: { post: PostCardData }) {
       <div className="flex items-center gap-3 mb-2.5">
         <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium shrink-0 overflow-hidden"
           style={{ background: 'linear-gradient(135deg, #FF5E78 0%, #6C5CE7 100%)', color: '#fff' }}>
-          {p?.avatar ? (
+          {(p?.avatar_url || p?.avatar) ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.avatar} alt="" className="w-full h-full object-cover" />
+            <img src={p.avatar_url || p.avatar || ''} alt="" className="w-full h-full object-cover" />
           ) : (
             <span>{p?.nickname?.[0] ?? '搭'}</span>
           )}
