@@ -22,6 +22,8 @@ function PostInner() {
   const [wechat, setWechat] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAllCats, setShowAllCats] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
+  const [imgUploading, setImgUploading] = useState(false);
   const [ready, setReady] = useState(false);
   const [notLoggedIn, setNotLoggedIn] = useState(false);
 
@@ -35,6 +37,22 @@ function PostInner() {
       setReady(true);
     })();
   }, [router]);
+
+  const uploadImage = async (file: File) => {
+    if (images.length >= 4) { toast('最多上传4张图片'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast('图片不超过5MB'); return; }
+    setImgUploading(true);
+    const sb = supabaseBrowser();
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { setImgUploading(false); return; }
+    const ext = file.name.split('.').pop();
+    const path = `${user.id}/${Date.now()}.${ext}`;
+    const { error } = await sb.storage.from('post-images').upload(path, file);
+    if (error) { toast('上传失败'); setImgUploading(false); return; }
+    const { data } = sb.storage.from('post-images').getPublicUrl(path);
+    setImages(prev => [...prev, data.publicUrl]);
+    setImgUploading(false);
+  };
 
   const submit = async () => {
     if (!title.trim()) return toast('请填写活动标题');
@@ -54,6 +72,7 @@ function PostInner() {
       title: title.trim(),
       content: content.trim(),
       city,
+      images,
       district: district.trim(),
       meet_time_type: timeType,
       status: 1,
@@ -233,6 +252,28 @@ function PostInner() {
           <p className="text-[11px] text-white/30 mt-1.5">仅在对方点击「打招呼」后展示给对方</p>
         </div>
 
+        <div>
+          <label className="text-sm text-white/60">图片（可选，最多4张）</label>
+          <div className="flex gap-2 mt-2.5 flex-wrap">
+            {images.map((url, i) => (
+              <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+                <button onClick={() => setImages(prev => prev.filter((_, j) => j !== i))}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs"
+                  style={{ background: 'rgba(0,0,0,0.6)', color: '#fff' }}>x</button>
+              </div>
+            ))}
+            {images.length < 4 && (
+              <label className="w-20 h-20 rounded-xl flex flex-col items-center justify-center cursor-pointer"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px dashed rgba(255,255,255,0.2)' }}>
+                <span className="text-2xl text-white/30">{imgUploading ? '...' : '+'}</span>
+                <span className="text-xs text-white/30 mt-1">{imgUploading ? '上传中' : '添加图片'}</span>
+                <input type="file" accept="image/*" className="hidden"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f); }} />
+              </label>
+            )}
+          </div>
+        </div>
         <button
           disabled={loading}
           onClick={submit}
