@@ -267,12 +267,9 @@ export default function MatchPage() {
                           className="w-14 h-14 rounded-full object-cover"
                           style={{ border: '1.5px solid rgba(255,107,157,0.3)' }} />
                       ) : (
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white"
-                          style={{
-                            background: 'linear-gradient(135deg, #FF6B9D, #C026D3)',
-                            border: '1.5px solid rgba(255,107,157,0.3)',
-                          }}>
-                          {firstChar}
+                        <div className="w-14 h-14 rounded-full overflow-hidden"
+                          style={{ border: '1.5px solid rgba(255,107,157,0.3)' }}>
+                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.user_id}&backgroundColor=b6e3f4,ffdfbf,ffd5dc,c0aede`} alt="" className="w-full h-full object-cover" />
                         </div>
                       )}
                       {online?.dot && (
