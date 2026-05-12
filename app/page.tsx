@@ -12,6 +12,7 @@ export default function Home() {
   const router = useRouter();
   const { city } = useCityStore();
   const [posts, setPosts] = useState<PostCardData[]>([]);
+  const [search, setSearch] = useState('');
   const [citySheet, setCitySheet] = useState(false);
   const [loading, setLoading] = useState(true);
   const [catCounts, setCatCounts] = useState<Record<string, number>>({});
@@ -67,6 +68,22 @@ export default function Home() {
           我
         </button>
       </header>
+
+      <div className="px-5 mt-4">
+        <div className="flex items-center gap-2 bg-white/8 border border-white/12 rounded-2xl px-4 py-2.5">
+          <span className="text-white/40 text-base">🔍</span>
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="搜索搭子、活动、地点..."
+            className="flex-1 bg-transparent text-sm text-white placeholder-white/30 outline-none"
+          />
+          {search && (
+            <button onClick={() => setSearch('')} className="text-white/40 text-xs px-1">✕</button>
+          )}
+        </div>
+      </div>
 
       <section className="px-5 pt-5">
         <div className="text-[10px] text-white/40 font-semibold tracking-[3px] uppercase mb-2">
@@ -124,7 +141,12 @@ export default function Home() {
               </button>
             </div>
           ) : (
-            posts.flatMap((p, i) => {
+            (search ? posts.filter(p =>
+              (p.title?.includes(search)) ||
+              (p.content?.includes(search)) ||
+              (p.profiles?.nickname?.includes(search)) ||
+              (p.district?.includes(search))
+            ) : posts).flatMap((p, i) => {
               const card = <PostCard key={p.post_id} post={p} />;
               if (i === 2) {
                 return [card, (
