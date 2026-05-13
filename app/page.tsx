@@ -18,6 +18,16 @@ export default function Home() {
   const [catCounts, setCatCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    // 注册推送通知
+    if ('serviceWorker' in navigator && 'Notification' in window) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+      if (Notification.permission === 'default') {
+        setTimeout(() => Notification.requestPermission(), 3000);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     // 更新用户活跃时间
     (async () => {
       const sb = supabaseBrowser();
