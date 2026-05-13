@@ -8,8 +8,7 @@ export default function InstallPrompt() {
 
   useEffect(() => {
     // 已经安装或已关闭过不再显示
-    const dismissed = localStorage.getItem('install-prompt-dismissed');
-    if (dismissed) return;
+
 
     const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const isInStandalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -38,7 +37,7 @@ export default function InstallPrompt() {
 
   const handleDismiss = () => {
     setShow(false);
-    localStorage.setItem('install-prompt-dismissed', '1');
+
   };
 
   if (!show) return null;
