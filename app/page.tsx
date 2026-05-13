@@ -5,6 +5,7 @@ import { supabaseBrowser } from '@/lib/supabase-browser';
 import { useCityStore } from '@/lib/store';
 import { CATEGORIES } from '@/lib/constants';
 import PostCard, { PostCardData } from '@/components/PostCard';
+import InstallPrompt from '@/components/InstallPrompt';
 import CitySheet from '@/components/CitySheet';
 import TabBar from '@/components/TabBar';
 
@@ -194,6 +195,7 @@ export default function Home() {
       </section>
 
       <CitySheet open={citySheet} onClose={() => setCitySheet(false)} />
+      <InstallPrompt />
       <TabBar />
     </div>
   );
