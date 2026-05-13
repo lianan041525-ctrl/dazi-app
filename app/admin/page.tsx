@@ -18,6 +18,8 @@ type Stats = {
   recentUsers: any[];
   recentPosts: any[];
   categoryStats: any[];
+  day1Retention: number;
+  day3Retention: number;
 };
 
 export default function AdminDashboard() {
@@ -52,6 +54,7 @@ export default function AdminDashboard() {
         { data: recentUsers },
         { data: recentPosts },
         { data: categoryStats },
+        { data: retentionData },
       ] = await Promise.all([
         sb.from('profiles').select('*', { count: 'exact', head: true }),
         sb.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', todayStart),
@@ -64,6 +67,7 @@ export default function AdminDashboard() {
         sb.from('profiles').select('user_id, nickname, city, created_at').order('created_at', { ascending: false }).limit(5),
         sb.from('posts').select('post_id, title, category, created_at, profiles(nickname)').order('created_at', { ascending: false }).limit(5),
         sb.from('posts').select('category').eq('status', 1),
+        sb.from('profiles').select('user_id, created_at, last_active_at'),
       ]);
 
       // 统计各分类帖子数
@@ -82,6 +86,28 @@ export default function AdminDashboard() {
         .map(([key, count]) => ({ name: CATEGORY_NAMES[key] || key, count }))
         .sort((a, b) => b.count - a.count);
 
+      // 计算次日留存和三日留存
+      const allProfiles = (retentionData ?? []) as any[];
+      const calcRetention = (days: number) => {
+        const base = allProfiles.filter(u => {
+          const reg = new Date(u.created_at);
+          const now = new Date();
+          const diffDays = (now.getTime() - reg.getTime()) / 86400000;
+          return diffDays >= days;
+        });
+        if (base.length === 0) return 0;
+        const retained = base.filter(u => {
+          if (!u.last_active_at) return false;
+          const reg = new Date(u.created_at);
+          const active = new Date(u.last_active_at);
+          const diff = (active.getTime() - reg.getTime()) / 86400000;
+          return diff >= days;
+        });
+        return Math.round(retained.length / base.length * 100);
+      };
+      const day1Retention = calcRetention(1);
+      const day3Retention = calcRetention(3);
+
       setStats({
         totalUsers: totalUsers || 0,
         todayUsers: todayUsers || 0,
@@ -94,6 +120,8 @@ export default function AdminDashboard() {
         recentUsers: recentUsers || [],
         recentPosts: recentPosts || [],
         categoryStats: catList,
+        day1Retention,
+        day3Retention,
       });
       setLoading(false);
     })();
@@ -165,6 +193,8 @@ export default function AdminDashboard() {
             <StatCard label="总帖子数" value={s.totalPosts} sub={`今日新增 +${s.todayPosts}`} color="#A78BFA" />
             <StatCard label="活跃帖子" value={s.activePosts} sub="匹配中" color="#60A5FA" />
             <StatCard label="总联系次数" value={s.totalContacts} sub={`今日 +${s.todayContacts}`} color="#34D399" />
+            <StatCard label="次日留存" value={`${s.day1Retention}%`} sub="注册次日回访率" color="#FB923C" />
+            <StatCard label="三日留存" value={`${s.day3Retention}%`} sub="注册3日内回访率" color="#F472B6" />
           </div>
         </section>
 
