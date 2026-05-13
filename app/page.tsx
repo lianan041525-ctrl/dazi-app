@@ -18,6 +18,17 @@ export default function Home() {
   const [catCounts, setCatCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    // 更新用户活跃时间
+    (async () => {
+      const sb = supabaseBrowser();
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) {
+        await sb.from('profiles').update({ last_active_at: new Date().toISOString() }).eq('user_id', user.id);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     (async () => {
       setLoading(true);
       const sb = supabaseBrowser();
