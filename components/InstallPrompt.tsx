@@ -11,7 +11,7 @@ export default function InstallPrompt() {
     const dismissed = localStorage.getItem('install-prompt-dismissed');
     if (dismissed) return;
 
-    const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const isInStandalone = window.matchMedia('(display-mode: standalone)').matches;
     if (isInStandalone) return;
 
