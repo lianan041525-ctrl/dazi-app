@@ -1,6 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { supabaseBrowser } from '@/lib/supabase-browser';
 import { useNavConfig } from '@/lib/useNavConfig';
 
 type IconProps = { active: boolean };
@@ -72,17 +74,31 @@ const DEFAULT_NAV = [
 
 export default function TabBar() {
   const pathname = usePathname();
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const sb = supabaseBrowser();
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return;
+      const { count } = await sb.from('contact_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('to_user_id', user.id)
+        .gt('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+      setUnread(count || 0);
+    })();
+  }, [pathname]);
   const navItems = useNavConfig();
   const items = navItems.length > 0 ? navItems : DEFAULT_NAV;
 
   const left = items.filter((_, i) => i < 2);
   const right = items.filter((_, i) => i >= 2);
 
-  const TabItem = ({ href, label, icon, active }: {
-    href: string; label: string; icon: React.ReactNode; active: boolean;
+  const TabItem = ({ href, label, icon, active, badge }: {
+    href: string; label: string; icon: React.ReactNode; active: boolean; badge?: boolean;
   }) => (
     <Link href={href} className="flex-1 flex flex-col items-center justify-center gap-0.5 h-full active:opacity-60 transition-opacity">
-      <div className="h-[22px] flex items-center">{icon}</div>
+      <div className="h-[22px] flex items-center relative">{icon}{badge && unread > 0 && <span className="absolute -top-1 -right-2 min-w-[16px] h-[16px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-0.5">{unread > 99 ? "99+" : unread}</span>}</div>
       <span className="text-[10px] font-medium leading-none transition-colors"
         style={{ color: active ? '#fff' : 'rgba(255,255,255,0.55)', textShadow: active ? '0 0 8px rgba(255,107,157,0.5)' : 'none' }}>
         {label}
@@ -100,7 +116,7 @@ export default function TabBar() {
           {left.map(item => {
             const active = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
             return <TabItem key={item.key} href={item.href} label={item.label}
-              icon={ICON_MAP[item.key]?.(!!active) ?? <HomeIcon active={!!active} />} active={!!active} />;
+              icon={ICON_MAP[item.key]?.(!!active) ?? <HomeIcon active={!!active} />} active={!!active} badge={item.key === 'messages'} />;
           })}
         </div>
         <div className="w-[68px] shrink-0" />
