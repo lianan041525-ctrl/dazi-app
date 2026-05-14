@@ -51,6 +51,28 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     })();
   }, [params.id]);
 
+  async function submitComment() {
+    if (!commentText.trim()) return;
+    const sb = supabaseBrowser();
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { toast('请先登录'); return; }
+    setCommenting(true);
+    const { data, error } = await sb.from('post_comments').insert({
+      post_id: post!.post_id, user_id: user.id, content: commentText.trim()
+    }).select('id, content, created_at, user_id, profiles(nickname, avatar_url)').single();
+    if (!error && data) {
+      setComments(prev => [...prev, data]);
+      setCommentText('');
+    }
+    setCommenting(false);
+  }
+
+  async function deleteComment(id: number) {
+    const sb = supabaseBrowser();
+    await sb.from('post_comments').delete().eq('id', id);
+    setComments(prev => prev.filter(c => c.id !== id));
+  }
+
   const contact = async () => {
     const sb = supabaseBrowser();
     const { data: { user } } = await sb.auth.getUser();
