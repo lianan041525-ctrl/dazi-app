@@ -12,6 +12,10 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [wechatRevealed, setReveal] = useState<string | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [commentText, setCommentText] = useState('');
+  const [commenting, setCommenting] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [contacting, setContacting] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
@@ -19,6 +23,16 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     (async () => {
       setLoading(true);
       setLoadError(null);
+
+      const { data: cmts } = await sb.from('post_comments')
+        .select('id, content, created_at, user_id, profiles(nickname, avatar_url)')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true })
+        .limit(50);
+      setComments(cmts || []);
+
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) setCurrentUserId(user.id);
       const sb = supabaseBrowser();
       const { data: postData, error: postError } = await sb.from('posts')
         .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count,images')
@@ -191,15 +205,83 @@ export default function DetailPage({ params }: { params: { id: string } }) {
         )}
       </div>
 
+      <div className="px-5 pb-4">
+        <div className="glass-card p-4 mt-3">
+          <div className="text-sm font-medium text-white mb-3">评论 {comments.length > 0 && <span className="text-white/40 text-xs">({comments.length})</span>}</div>
+          {comments.length === 0 && (
+            <div className="text-center py-4 text-white/30 text-sm">还没有评论，来说一句吧 👋</div>
+          )}
+          {comments.map(c => (
+            <div key={c.id} className="flex gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-full overflow-hidden shrink-0"
+                style={{ background: 'linear-gradient(135deg, #FF6B9D, #C026D3)' }}>
+                {c.profiles?.avatar_url
+                  ? <img src={c.profiles.avatar_url} className="w-full h-full object-cover" alt="" />
+                  : <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${c.user_id}&backgroundColor=b6e3f4,ffdfbf`} className="w-full h-full object-cover" alt="" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-white/80">{c.profiles?.nickname || '用户'}</span>
+                  <span className="text-[10px] text-white/30">{new Date(c.created_at).toLocaleDateString('zh-CN')}</span>
+                  {currentUserId === c.user_id && (
+                    <button onClick={() => deleteComment(c.id)} className="text-[10px] text-white/20 ml-auto">删除</button>
+                  )}
+                </div>
+                <div className="text-sm text-white/75 mt-0.5 leading-relaxed">{c.content}</div>
+              </div>
+            </div>
+          ))}
+          <div className="flex gap-2 mt-3">
+            <input
+              value={commentText}
+              onChange={e => setCommentText(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && submitComment()}
+              placeholder="说点什么..."
+              maxLength={200}
+              className="flex-1 bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/30 outline-none"
+            />
+            <button
+              onClick={submitComment}
+              disabled={commenting || !commentText.trim()}
+              className="btn-gradient px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-40"
+            >
+              发送
+            </button>
+          </div>
+        </div>
+      </div>
+
       <footer className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 safe-bottom z-20"
         style={{ background: 'rgba(15,11,30,0.9)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderTop: '0.5px solid rgba(255,255,255,0.08)' }}>
-        <button
-          onClick={contact}
-          disabled={contacting || !!wechatRevealed}
-          className="btn-gradient w-full h-12 rounded-xl font-medium disabled:opacity-60"
-        >
-          {wechatRevealed ? '已获取联系方式' : contacting ? '请稍候...' : '打招呼'}
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={async () => {
+              const url = `${window.location.origin}/detail/${post.post_id}`;
+              if (navigator.share) {
+                try {
+                  await navigator.share({ title: post.title, text: `${post.title} - 在心遇找搭子`, url });
+                } catch {}
+              } else {
+                await navigator.clipboard.writeText(url);
+                toast('链接已复制');
+              }
+            }}
+            className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 text-white/60 active:opacity-70"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.12)' }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+          <button
+            onClick={contact}
+            disabled={contacting || !!wechatRevealed}
+            className="btn-gradient flex-1 h-12 rounded-xl font-medium disabled:opacity-60"
+          >
+            {wechatRevealed ? '已获取联系方式' : contacting ? '请稍候...' : '打招呼'}
+          </button>
+        </div>
       </footer>
 
       {reportOpen && (
