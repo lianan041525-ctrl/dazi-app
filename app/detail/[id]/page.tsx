@@ -31,9 +31,9 @@ export default function DetailPage({ params }: { params: { id: string } }) {
         .limit(50);
       setComments(cmts || []);
 
+      const sb = supabaseBrowser();
       const { data: { user } } = await sb.auth.getUser();
       if (user) setCurrentUserId(user.id);
-      const sb = supabaseBrowser();
       const { data: postData, error: postError } = await sb.from('posts')
         .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count,images')
         .eq('post_id', params.id).maybeSingle();
