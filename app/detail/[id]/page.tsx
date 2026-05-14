@@ -24,16 +24,17 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       setLoading(true);
       setLoadError(null);
 
+      const sb = supabaseBrowser();
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) setCurrentUserId(user.id);
+
+      const postId = params.id;
       const { data: cmts } = await sb.from('post_comments')
         .select('id, content, created_at, user_id, profiles(nickname, avatar_url)')
         .eq('post_id', postId)
         .order('created_at', { ascending: true })
         .limit(50);
       setComments(cmts || []);
-
-      const sb = supabaseBrowser();
-      const { data: { user } } = await sb.auth.getUser();
-      if (user) setCurrentUserId(user.id);
       const { data: postData, error: postError } = await sb.from('posts')
         .select('post_id,user_id,category,title,content,city,district,meet_time_type,status,created_at,contact_count,images')
         .eq('post_id', params.id).maybeSingle();
