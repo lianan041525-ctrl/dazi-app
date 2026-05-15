@@ -20,6 +20,8 @@ type Stats = {
   categoryStats: any[];
   day1Retention: number;
   day3Retention: number;
+  totalCheckIns: number;
+  todayCheckIns: number;
 };
 
 export default function AdminDashboard() {
@@ -55,6 +57,8 @@ export default function AdminDashboard() {
         { data: recentPosts },
         { data: categoryStats },
         { data: retentionData },
+        { count: totalCheckIns },
+        { count: todayCheckIns },
       ] = await Promise.all([
         sb.from('profiles').select('*', { count: 'exact', head: true }),
         sb.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', todayStart),
@@ -68,6 +72,8 @@ export default function AdminDashboard() {
         sb.from('posts').select('post_id, title, category, created_at, profiles(nickname)').order('created_at', { ascending: false }).limit(5),
         sb.from('posts').select('category').eq('status', 1),
         sb.from('profiles').select('user_id, created_at, last_active_at'),
+        sb.from('check_ins').select('*', { count: 'exact', head: true }),
+        sb.from('check_ins').select('*', { count: 'exact', head: true }).gte('created_at', todayStart),
       ]);
 
       // 统计各分类帖子数
@@ -122,6 +128,8 @@ export default function AdminDashboard() {
         categoryStats: catList,
         day1Retention,
         day3Retention,
+        totalCheckIns: totalCheckIns || 0,
+        todayCheckIns: todayCheckIns || 0,
       });
       setLoading(false);
     })();
@@ -194,7 +202,8 @@ export default function AdminDashboard() {
             <StatCard label="活跃帖子" value={s.activePosts} sub="匹配中" color="#60A5FA" />
             <StatCard label="总联系次数" value={s.totalContacts} sub={`今日 +${s.todayContacts}`} color="#34D399" />
             <StatCard label="次日留存" value={`${s.day1Retention}%`} sub="注册次日回访率" color="#FB923C" />
-            <StatCard label="三日留存" value={`${s.day3Retention}%`} sub="注册3日内回访率" color="#F472B6" />
+            <StatCard label="三日留存" value={`\${s.day3Retention}%`} sub="注册3日内回访率" color="#F472B6" />
+            <StatCard label="总签到次数" value={s.totalCheckIns} sub={`今日 +\${s.todayCheckIns}`} color="#34D399" />
           </div>
         </section>
 
