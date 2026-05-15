@@ -117,31 +117,21 @@ export default function MessagesPage() {
       </header>
 
       <section className="px-5 mt-2">
-        <div className="glass-card p-4">
-          <div className="grid grid-cols-4 gap-2">
-            {[
-              { icon: '❤️', label: '点赞', color: '#FF6B9D' },
-              { icon: '💬', label: '评论', color: '#A78BFA' },
-              { icon: '👤', label: '关注', color: '#60A5FA' },
-              { icon: '📢', label: '系统通知', color: '#FF8C35' },
-            ].map((item) => (
-              <button
-                key={item.label}
-                onClick={showToast}
-                className="flex flex-col items-center gap-1.5 py-2 active:opacity-70 transition"
-              >
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl"
-                  style={{
-                    background: `linear-gradient(135deg, ${item.color}33, ${item.color}11)`,
-                    border: `1px solid ${item.color}33`,
-                  }}>
-                  {item.icon}
-                </div>
-                <span className="text-[11px] text-white/70">{item.label}</span>
-              </button>
-            ))}
+        <div className="relative overflow-hidden rounded-2xl cursor-pointer active:opacity-90 transition"
+          style={{ background: 'linear-gradient(135deg, #FF5E78 0%, #C026D3 50%, #6C5CE7 100%)' }}
+          onClick={() => router.push('/vip')}>
+          <div className="p-4 flex items-center gap-4">
+            <div className="text-4xl">👑</div>
+            <div className="flex-1">
+              <div className="text-white font-bold text-base">连续签到7天送永久VIP</div>
+              <div className="text-white/80 text-xs mt-0.5">解锁无限联系 · 查看所有访客 · 专属权益</div>
+            </div>
+            <div className="shrink-0">
+              <div className="bg-white/20 rounded-full px-3 py-1.5 text-white text-xs font-medium">去签到 →</div>
+            </div>
           </div>
-          <p className="text-[10px] text-white/30 text-center mt-3">点赞、评论、关注功能即将上线</p>
+          <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/5" />
+          <div className="absolute -right-2 -bottom-6 w-20 h-20 rounded-full bg-white/5" />
         </div>
       </section>
 
