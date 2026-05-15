@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase-server';
 
-const FREE_DAILY_LIMIT = 3; // 免费用户每天限制次数
+const FREE_DAILY_LIMIT = 1; // 免费用户每天限制次数
 
 export async function POST(req: Request) {
   try {
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       if (todayCount >= FREE_DAILY_LIMIT) {
         return NextResponse.json({
           code: 403,
-          msg: `今日免费联系次数已用完（${FREE_DAILY_LIMIT}次），开通会员享无限联系`,
+          msg: `每天仅有1次免费打招呼机会，开通会员享无限联系`,
           data: { need_vip: true },
         });
       }
