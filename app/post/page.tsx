@@ -57,6 +57,16 @@ function PostInner() {
   const submit = async () => {
     if (!title.trim()) return toast('请填写活动标题');
     if (!content.trim()) return toast('请填写活动描述');
+
+    // 敏感词过滤
+    const BANNED_WORDS = [
+      '一夜情','约炮','打飞机','Q群','微信群','加群','色情','援交','包养','小姐','鸭子',
+      '性服务','嫖','卖淫','约会费','见面费','空降','外围','兼职赚钱','日结','百分百',
+      '无套','口交','肛交','做爱','激情','成人','裸聊','视频诱惑','发育','下面',
+    ];
+    const allText = (title + content).toLowerCase();
+    const hit = BANNED_WORDS.find(w => allText.includes(w));
+    if (hit) return toast('内容含有违规词汇，请修改后重新发布');
     if (!wechat.trim()) return toast('请填写微信号');
 
     setLoading(true);
