@@ -46,7 +46,7 @@ export default function VipPage() {
         <button onClick={() => router.back()}
           className="absolute left-5 top-14 text-white/50 text-lg">←</button>
         <div className="text-3xl mb-2">👑</div>
-        <h1 className="text-2xl font-bold text-white">搭子会员</h1>
+        <h1 className="text-2xl font-bold text-white">心遇会员</h1>
         <p className="text-white/50 text-sm mt-1">解锁无限联系，找到更多搭子</p>
       </header>
 

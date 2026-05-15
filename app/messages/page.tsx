@@ -119,7 +119,7 @@ export default function MessagesPage() {
       <section className="px-5 mt-2">
         <div className="relative overflow-hidden rounded-2xl cursor-pointer active:opacity-90 transition"
           style={{ background: 'linear-gradient(135deg, #FF5E78 0%, #C026D3 50%, #6C5CE7 100%)' }}
-          onClick={() => router.push('/vip')}>
+          onClick={() => router.push('/checkin')}>
           <div className="p-4 flex items-center gap-4">
             <div className="text-4xl">👑</div>
             <div className="flex-1">
