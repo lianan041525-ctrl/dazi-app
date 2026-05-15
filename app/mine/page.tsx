@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
+import CheckIn from '@/components/CheckIn';
 import { CATEGORY_MAP, timeAgo } from '@/lib/constants';
 import TabBar from '@/components/TabBar';
 import Toast, { toast } from '@/components/Toast';
@@ -163,6 +164,7 @@ export default function MinePage() {
       </header>
 
       {/* 会员状态入口 */}
+      <CheckIn />
       <section className="px-5 mt-4 mb-2">
         <button
           onClick={() => router.push('/vip')}
