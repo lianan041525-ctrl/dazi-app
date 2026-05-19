@@ -1,4 +1,5 @@
 'use client';
+import jsQR from 'jsqr';
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase-browser';
@@ -38,7 +39,31 @@ function PostInner() {
     })();
   }, [router]);
 
+  const checkQRCode = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) { resolve(false); return; }
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+          resolve(!!code);
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const uploadImage = async (file: File) => {
+    const hasQR = await checkQRCode(file);
+    if (hasQR) { toast('禁止上传二维码图片，请上传个人真实照片'); return; }
     if (images.length >= 4) { toast('最多上传4张图片'); return; }
     if (file.size > 5 * 1024 * 1024) { toast('图片不超过5MB'); return; }
     setImgUploading(true);
