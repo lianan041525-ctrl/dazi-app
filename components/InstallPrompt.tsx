@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import posthog from 'posthog-js';
 
 export default function InstallPrompt() {
   const [show, setShow] = useState(false);
@@ -31,7 +32,10 @@ export default function InstallPrompt() {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') setShow(false);
+      if (outcome === 'accepted') {
+        setShow(false);
+        posthog.capture('pwa_installed', { method: 'android' });
+      }
     }
   };
 
