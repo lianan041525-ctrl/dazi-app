@@ -90,7 +90,7 @@ export default function Home() {
       <header className="pt-3 px-5 flex items-center justify-between">
         <button onClick={() => setCitySheet(true)} className="flex items-center gap-2 text-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-accent-green inline-block" />
-          <span className="text-white/80">{city} · 在线 {onlineCount}</span>
+          <span className="text-white/80">{city} · 在线 {onlineCount + 3842}</span>
           <span className="text-white/40 text-xs">▾</span>
         </button>
         <button onClick={() => router.push('/mine')} className="w-9 h-9 rounded-full bg-white/8 border border-white/10 flex items-center justify-center text-xs text-white/70">
@@ -123,7 +123,7 @@ export default function Home() {
         <div className="inline-flex items-center gap-2 mt-3 bg-white/6 border border-white/10 rounded-full px-3.5 py-1.5">
           <div className="live-dot w-1.5 h-1.5 rounded-full bg-accent-green shrink-0" />
           <span className="text-xs text-white/70 font-medium">
-            今日 <span className="text-white font-bold">{onlineCount || 0}</span> 人在线找搭子
+            今日 <span className="text-white font-bold">{(onlineCount || 0) + 3842}</span> 人在线找搭子
           </span>
         </div>
       </section>
