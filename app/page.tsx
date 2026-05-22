@@ -14,6 +14,7 @@ export default function Home() {
   const { city } = useCityStore();
   const [posts, setPosts] = useState<PostCardData[]>([]);
   const [search, setSearch] = useState('');
+  const [adBanner, setAdBanner] = useState<{title:string,subtitle:string,url:string}|null>(null);
   const [citySheet, setCitySheet] = useState(false);
   const [loading, setLoading] = useState(true);
   const [catCounts, setCatCounts] = useState<Record<string, number>>({});
@@ -43,6 +44,10 @@ export default function Home() {
         .select('*', { count: 'exact', head: true })
         .gte('last_active_at', todayStart.toISOString());
       setOnlineCount(count || 0);
+
+      // 拉自定义广告
+      const { data: ads } = await sb.from('ad_banners').select('title,subtitle,url').eq('enabled', true).order('sort_order').limit(1);
+      if (ads && ads.length > 0) setAdBanner(ads[0]);
     })();
   }, []);
 
@@ -178,7 +183,7 @@ export default function Home() {
             ) : posts).flatMap((p, i) => {
               const card = <PostCard key={p.post_id} post={p} />;
               if ((i + 1) % 3 === 0) {
-                return [card, (
+                const ads = [card,
                   <div key="vip-ad" onClick={() => router.push('/vip')}
                     className="glass-card p-4 mt-3 cursor-pointer active:scale-[0.98] transition-transform"
                     style={{ background: 'linear-gradient(135deg, rgba(255,94,120,0.15), rgba(108,92,231,0.15))', borderColor: 'rgba(255,94,120,0.3)' }}>
@@ -193,7 +198,25 @@ export default function Home() {
                       立即了解 →
                     </button>
                   </div>
-                )];
+                ];
+                if (adBanner) ads.push(
+                  <div key="custom-ad" onClick={() => adBanner.url && window.open(adBanner.url, '_blank')}
+                    className="glass-card p-4 mt-3 cursor-pointer active:scale-[0.98] transition-transform"
+                    style={{ background: 'linear-gradient(135deg, rgba(6,214,160,0.12), rgba(59,130,246,0.12))', borderColor: 'rgba(6,214,160,0.25)' }}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-white font-semibold text-sm">{adBanner.title}</div>
+                        <div className="text-white/50 text-xs mt-1">{adBanner.subtitle}</div>
+                      </div>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded text-white/40 border border-white/20 ml-2 shrink-0">广告</span>
+                    </div>
+                    <button className="mt-3 px-4 py-1.5 rounded-full text-xs font-medium text-white"
+                      style={{ background: 'linear-gradient(135deg, #06D6A0, #3B82F6)' }}>
+                      立即查看 →
+                    </button>
+                  </div>
+                );
+                return ads;
               }
               return [card];
             })

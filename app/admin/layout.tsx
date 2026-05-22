@@ -10,6 +10,7 @@ const MENU = [
   { label: '用户管理', href: '/admin/users', icon: '👥' },
   { label: '帖子管理', href: '/admin/posts', icon: '📝' },
   { label: '广告位管理', href: '/admin/banners', icon: '📢' },
+  { label: '首页广告', href: '/admin/ads', icon: '🎯' },
   { label: '导航配置', href: '/admin/nav', icon: '🔧' },
 ];
 
