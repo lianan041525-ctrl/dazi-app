@@ -81,10 +81,17 @@ export default function AdsPage() {
                 <button onClick={() => del(ad.id)} className="text-xs px-3 py-1 rounded-full bg-red-500/20 text-red-400">删除</button>
               </div>
             </div>
-            <input defaultValue={ad.subtitle} onBlur={e => save(ad.id, { subtitle: e.target.value })}
+            <input defaultValue={ad.subtitle} onChange={e => {
+                const v = e.target.value;
+                setAds(prev => prev.map(a => a.id === ad.id ? {...a, subtitle: v} : a));
+              }} onBlur={e => save(ad.id, { subtitle: e.target.value })}
+              placeholder="副标题"
               className="w-full bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-xs text-white mb-2 outline-none" />
-            <input defaultValue={ad.url} onBlur={e => save(ad.id, { url: e.target.value })}
-              placeholder="跳转链接"
+            <input defaultValue={ad.url} onChange={e => {
+                const v = e.target.value;
+                setAds(prev => prev.map(a => a.id === ad.id ? {...a, url: v} : a));
+              }} onBlur={e => save(ad.id, { url: e.target.value })}
+              placeholder="跳转链接（如：https://citydz.cc）"
               className="w-full bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none" />
           </div>
         ))}
