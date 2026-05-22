@@ -58,13 +58,13 @@ export default function AdsPage() {
         <div className="text-sm font-medium mb-3">添加新广告</div>
         <input value={form.title} onChange={e => setForm(p => ({...p, title: e.target.value}))}
           placeholder="广告标题（如：💕 一个月见四次面）"
-          className="w-full bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-sm text-white mb-2 outline-none" />
+          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 mb-2 outline-none" />
         <input value={form.subtitle} onChange={e => setForm(p => ({...p, subtitle: e.target.value}))}
           placeholder="副标题（如：找到真实的线下搭子）"
-          className="w-full bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-sm text-white mb-2 outline-none" />
+          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 mb-2 outline-none" />
         <input value={form.url} onChange={e => setForm(p => ({...p, url: e.target.value}))}
           placeholder="跳转链接（如：https://citydz.cc）"
-          className="w-full bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-sm text-white mb-3 outline-none" />
+          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 mb-3 outline-none" />
         <button onClick={add} className="btn-gradient px-6 py-2 rounded-xl text-sm font-medium">添加广告</button>
       </div>
 
@@ -86,13 +86,13 @@ export default function AdsPage() {
                 setAds(prev => prev.map(a => a.id === ad.id ? {...a, subtitle: v} : a));
               }} onBlur={e => save(ad.id, { subtitle: e.target.value })}
               placeholder="副标题"
-              className="w-full bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-xs text-white mb-2 outline-none" />
+              className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 mb-2 outline-none" />
             <input defaultValue={ad.url} onChange={e => {
                 const v = e.target.value;
                 setAds(prev => prev.map(a => a.id === ad.id ? {...a, url: v} : a));
               }} onBlur={e => save(ad.id, { url: e.target.value })}
               placeholder="跳转链接（如：https://citydz.cc）"
-              className="w-full bg-white/8 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+              className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 outline-none" />
           </div>
         ))}
       </div>
