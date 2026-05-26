@@ -216,7 +216,7 @@ export default function MinePage() {
           <div className="space-y-3">
             {posts.map((p) => {
               const cat = CATEGORY_MAP[p.category] ?? { name: '其他', icon: '📌' };
-              const statusText = p.status === 1 ? '匹配中' : p.status === 3 ? '已下架' : '已结束';
+              const statusText = p.status === 1 ? '匹配中' : p.status === 3 ? '已下架' : p.status === 0 ? '审核中' : '已结束';
               const statusCls = p.status === 1
                 ? { background: 'rgba(6,214,160,0.15)', color: '#06D6A0' }
                 : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)' };
