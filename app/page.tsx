@@ -59,7 +59,7 @@ export default function Home() {
         .from('posts')
         .select('post_id,category,title,content,city,district,created_at,user_id')
         .eq('status', 1)
-        .order('created_at', { ascending: false }).limit(20);
+        .order('created_at', { ascending: false });
 
       const rawPosts = postData ?? [];
       const userIds = [...new Set(rawPosts.map((p: any) => p.user_id))];

@@ -48,7 +48,7 @@ export default function PostCard({ post }: { post: PostCardData }) {
             )}
           </div>
           <div className="text-[11px] text-white/40 mt-0.5">
-            {post.city}{post.district ? ` · ${post.district}` : ''} · {timeAgo(post.created_at)}
+            {post.city}{post.district ? ` · ${post.district}` : ''}
           </div>
         </div>
         <button className="btn-gradient text-[11px] px-3 py-1.5 rounded-full font-medium shrink-0"
