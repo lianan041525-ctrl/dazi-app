@@ -113,7 +113,15 @@ export default function MessagesPage() {
         <div className="absolute inset-0 -z-10" style={{
           background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,107,157,0.18) 0%, transparent 60%)',
         }} />
-        <h1 className="text-2xl font-bold text-white">消息</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-white">消息</h1>
+          <button onClick={() => {
+            localStorage.setItem('messages_last_read', new Date().toISOString());
+            toast('✅ 已全部标记为已读');
+          }} className="text-xs text-white/40 px-3 py-1.5 rounded-full border border-white/10 active:opacity-60">
+            一键已读
+          </button>
+        </div>
       </header>
 
       <section className="px-5 mt-2">
