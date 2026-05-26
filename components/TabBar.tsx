@@ -81,12 +81,20 @@ export default function TabBar() {
       const sb = supabaseBrowser();
       const { data: { user } } = await sb.auth.getUser();
       if (!user) return;
+      const lastRead = localStorage.getItem('messages_last_read') || '1970-01-01';
       const { count } = await sb.from('contact_logs')
         .select('*', { count: 'exact', head: true })
         .eq('to_user_id', user.id)
-        .gt('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+        .gt('created_at', lastRead);
       setUnread(count || 0);
     })();
+  }, [pathname]);
+
+  useEffect(() => {
+    if (pathname === '/messages') {
+      localStorage.setItem('messages_last_read', new Date().toISOString());
+      setUnread(0);
+    }
   }, [pathname]);
   const navItems = useNavConfig();
   const items = navItems.length > 0 ? navItems : DEFAULT_NAV;
