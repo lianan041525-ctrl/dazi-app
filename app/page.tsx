@@ -183,7 +183,7 @@ export default function Home() {
               (p.district?.includes(search))
             ) : posts).flatMap((p, i) => {
               const card = <PostCard key={p.post_id} post={p} />;
-              if ((i + 1) % 10 === 0) {
+              if ((i + 1) % 3 === 0) {
                 const ads = [card,
                   <div key="vip-ad" onClick={() => router.push('/vip')}
                     className="glass-card p-4 mt-3 cursor-pointer active:scale-[0.98] transition-transform"
