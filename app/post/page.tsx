@@ -116,7 +116,7 @@ function PostInner() {
       images,
       district: district.trim(),
       meet_time_type: timeType,
-      status: 1,
+      status: 0, // 待审核
     }).select('post_id').single();
 
     setLoading(false);

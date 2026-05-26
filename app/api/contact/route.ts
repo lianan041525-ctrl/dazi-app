@@ -99,6 +99,16 @@ export async function POST(req: Request) {
     // 联系次数 +1（尽力而为，失败不影响主流程）
     try { await sb.rpc('increment_contact_count', { pid: post_id }); } catch {}
 
+    // 写通知记录
+    try {
+      await sb.from('notifications').insert({
+        user_id: post.user_id,
+        type: 'contact',
+        content: '有人对你的帖子感兴趣，向你打了招呼',
+        is_read: false,
+      });
+    } catch {}
+
     return NextResponse.json({
       code: 0,
       msg: 'ok',

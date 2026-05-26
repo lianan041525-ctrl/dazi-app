@@ -88,6 +88,8 @@ function LoginInner() {
         if (isPhone(account)) profileData.phone = account;
         else if (!isEmail(account)) profileData.username = account;
         await sb.from('profiles').upsert(profileData);
+        // 新用户标记，首页显示引导弹窗
+        localStorage.setItem('is_new_user', '1');
       }
 
       router.replace(redirect);

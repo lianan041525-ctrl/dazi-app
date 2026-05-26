@@ -6,6 +6,7 @@ import { useCityStore } from '@/lib/store';
 import { CATEGORIES } from '@/lib/constants';
 import PostCard, { PostCardData } from '@/components/PostCard';
 import InstallPrompt from '@/components/InstallPrompt';
+import NewUserGuide from '@/components/NewUserGuide';
 import CitySheet from '@/components/CitySheet';
 import TabBar from '@/components/TabBar';
 
@@ -226,6 +227,7 @@ export default function Home() {
 
       <CitySheet open={citySheet} onClose={() => setCitySheet(false)} />
       <InstallPrompt />
+      <NewUserGuide />
       <TabBar />
     </div>
   );
