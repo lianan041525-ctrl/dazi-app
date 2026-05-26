@@ -16,6 +16,7 @@ export default function MessagesPage() {
   const [receivedLogs, setReceivedLogs] = useState<any[]>([]);
   const [sentLogs, setSentLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [adBanner, setAdBanner] = useState<{title:string,subtitle:string,url:string}|null>(null);
 
   useEffect(() => {
     (async () => {
@@ -23,6 +24,9 @@ export default function MessagesPage() {
       const { data: { user } } = await sb.auth.getUser();
       if (!user) { setNotLoggedIn(true); setLoading(false); return; }
       setUserId(user.id);
+      const sb2 = supabaseBrowser();
+      const { data: ads } = await sb2.from('ad_banners').select('title,subtitle,url').eq('enabled', true).order('sort_order').limit(1);
+      if (ads && ads.length > 0) setAdBanner(ads[0]);
 
       const { data: received } = await sb
         .from('contact_logs')
@@ -142,19 +146,21 @@ export default function MessagesPage() {
           <div className="absolute -right-2 -bottom-6 w-20 h-20 rounded-full bg-white/5" />
         </div>
 
-        <div className="mt-3 rounded-2xl cursor-pointer active:opacity-90 transition p-4 flex items-center gap-4"
-          style={{ background: 'linear-gradient(135deg, rgba(6,214,160,0.15), rgba(59,130,246,0.15))', border: '1px solid rgba(6,214,160,0.25)' }}
-          onClick={() => window.open('https://citydz.cc', '_blank')}>
-          <div className="text-3xl">💕</div>
-          <div className="flex-1">
-            <div className="text-white font-bold text-sm">一个月见四次面</div>
-            <div className="text-white/60 text-xs mt-0.5">找到真实的线下搭子，马上出发</div>
+        {adBanner && (
+          <div className="mt-3 rounded-2xl cursor-pointer active:opacity-90 transition p-4 flex items-center gap-4"
+            style={{ background: 'linear-gradient(135deg, rgba(6,214,160,0.15), rgba(59,130,246,0.15))', border: '1px solid rgba(6,214,160,0.25)' }}
+            onClick={() => adBanner.url && window.open(adBanner.url, '_blank')}>
+            <div className="text-3xl">💕</div>
+            <div className="flex-1">
+              <div className="text-white font-bold text-sm">{adBanner.title}</div>
+              <div className="text-white/60 text-xs mt-0.5">{adBanner.subtitle}</div>
+            </div>
+            <div className="shrink-0">
+              <div className="rounded-full px-3 py-1.5 text-white text-xs font-medium"
+                style={{ background: 'linear-gradient(135deg, #06D6A0, #3B82F6)' }}>立即查看 →</div>
+            </div>
           </div>
-          <div className="shrink-0">
-            <div className="rounded-full px-3 py-1.5 text-white text-xs font-medium"
-              style={{ background: 'linear-gradient(135deg, #06D6A0, #3B82F6)' }}>立即查看 →</div>
-          </div>
-        </div>
+        )}
       </section>
 
       <section className="px-5 mt-5">
