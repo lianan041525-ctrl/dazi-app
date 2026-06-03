@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase-server';
 
-const FREE_DAILY_LIMIT = 1; // 免费用户每天限制次数
+const FREE_DAILY_LIMIT = 0; // 免费用户每天限制次数
 
 export async function POST(req: Request) {
   try {
